@@ -113,6 +113,7 @@ file_owner_grub2_cfg: true
 file_permissions_etc_group: true
 file_permissions_etc_passwd: true
 file_permissions_etc_shadow: true
+file_permissions_var_log_audit: true
 grub2_audit_argument: true
 high_complexity: true
 high_disruption: true
