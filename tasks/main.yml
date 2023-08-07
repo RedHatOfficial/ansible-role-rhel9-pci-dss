@@ -426,10 +426,10 @@
 
 - name: Ensure AIDE is installed
   package:
-    name:
-    - aide
-    - crontabs
+    name: '{{ item }}'
     state: present
+  with_items:
+  - aide
   when:
   - aide_periodic_cron_checking | bool
   - low_complexity | bool
@@ -671,12 +671,12 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Test for crypto_policy group
-  command: grep '^\s*\[\s*crypto_policy\s*]' /etc/pki/tls/openssl.cnf
+- name: Configure OpenSSL library to use System Crypto Policy - Search for crypto_policy Section
+  ansible.builtin.find:
+    paths: /etc/pki/tls
+    patterns: openssl.cnf
+    contains: ^\s*\[\s*crypto_policy\s*]
   register: test_crypto_policy_group
-  failed_when: test_crypto_policy_group.rc not in [0, 1]
-  changed_when: false
-  check_mode: false
   tags:
   - CCE-83452-3
   - NIST-800-53-AC-17(2)
@@ -702,8 +702,39 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
 
-- name: Add .include for opensslcnf.config to crypto_policy section
-  lineinfile:
+- name: Configure OpenSSL library to use System Crypto Policy - Search for crypto_policy Section Together With .include Directive
+  ansible.builtin.find:
+    paths: /etc/pki/tls
+    patterns: openssl.cnf
+    contains: ^\s*\.include\s*(?:=\s*)?/etc/crypto-policies/back-ends/opensslcnf.config$
+  register: test_crypto_policy_include_directive
+  tags:
+  - CCE-83452-3
+  - NIST-800-53-AC-17(2)
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-MA-4(6)
+  - NIST-800-53-SC-12(2)
+  - NIST-800-53-SC-12(3)
+  - NIST-800-53-SC-13
+  - PCI-DSS-Req-2.2
+  - PCI-DSSv4-2.2
+  - configure_openssl_crypto_policy
+  - low_complexity
+  - medium_disruption
+  - medium_severity
+  - no_reboot_needed
+  - unknown_strategy
+  when:
+  - configure_openssl_crypto_policy | bool
+  - low_complexity | bool
+  - medium_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - unknown_strategy | bool
+
+- name: '{{ rule_title }} - Add .include Line for opensslcnf.config File in crypto_policy Section'
+  ansible.builtin.lineinfile:
     create: true
     insertafter: ^\s*\[\s*crypto_policy\s*]\s*
     line: .include = /etc/crypto-policies/back-ends/opensslcnf.config
@@ -715,8 +746,8 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - unknown_strategy | bool
-  - test_crypto_policy_group.stdout is defined
-  - test_crypto_policy_group.stdout | length > 0
+  - test_crypto_policy_group.matched > 0
+  - test_crypto_policy_include_directive.matched == 0
   tags:
   - CCE-83452-3
   - NIST-800-53-AC-17(2)
@@ -735,8 +766,9 @@
   - no_reboot_needed
   - unknown_strategy
 
-- name: Add crypto_policy group and set include opensslcnf.config
-  lineinfile:
+- name: Configure OpenSSL library to use System Crypto Policy - Add crypto_policy Section With .include for opensslcnf.config
+    File
+  ansible.builtin.lineinfile:
     create: true
     line: '[crypto_policy]
 
@@ -749,8 +781,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - unknown_strategy | bool
-  - test_crypto_policy_group.stdout is defined
-  - test_crypto_policy_group.stdout | length < 1
+  - test_crypto_policy_group.matched == 0
   tags:
   - CCE-83452-3
   - NIST-800-53-AC-17(2)
@@ -796,6 +827,50 @@
   - medium_disruption | bool
   - medium_severity | bool
   - reboot_required | bool
+
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+  tags:
+  - CCE-87295-2
+  - PCI-DSS-Req-6.2
+  - PCI-DSSv4-6.3.3
+  - dconf_db_up_to_date
+  - high_severity
+  - low_complexity
+  - medium_disruption
+  - no_reboot_needed
+  - unknown_strategy
+  when:
+  - dconf_db_up_to_date | bool
+  - high_severity | bool
+  - low_complexity | bool
+  - medium_disruption | bool
+  - no_reboot_needed | bool
+  - unknown_strategy | bool
+
+- name: Run dconf update
+  ansible.builtin.command:
+    cmd: dconf update
+  when:
+  - dconf_db_up_to_date | bool
+  - high_severity | bool
+  - low_complexity | bool
+  - medium_disruption | bool
+  - no_reboot_needed | bool
+  - unknown_strategy | bool
+  - '"gdm" in ansible_facts.packages'
+  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  tags:
+  - CCE-87295-2
+  - PCI-DSS-Req-6.2
+  - PCI-DSSv4-6.3.3
+  - dconf_db_up_to_date
+  - high_severity
+  - low_complexity
+  - medium_disruption
+  - no_reboot_needed
+  - unknown_strategy
 
 - name: Gather the package facts
   package_facts:
@@ -5210,6 +5285,77 @@
   - medium_severity
   - no_reboot_needed
   - service_pcscd_enabled
+
+- name: Check existence of opensc conf
+  stat:
+    path: /etc/opensc-{{ ansible_architecture }}.conf
+  register: opensc_conf_cd
+  when:
+  - configure_opensc_card_drivers | bool
+  - configure_strategy | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  tags:
+  - CCE-89122-6
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-2(1)
+  - NIST-800-53-IA-2(11)
+  - NIST-800-53-IA-2(2)
+  - NIST-800-53-IA-2(3)
+  - NIST-800-53-IA-2(4)
+  - NIST-800-53-IA-2(6)
+  - NIST-800-53-IA-2(7)
+  - PCI-DSS-Req-8.3
+  - PCI-DSSv4-8.4
+  - configure_opensc_card_drivers
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
+- name: Configure smartcard driver block
+  block:
+  - name: Check if card_drivers is defined
+    command: /usr/bin/opensc-tool -G app:default:card_drivers
+    changed_when: false
+    register: card_drivers
+  - name: Configure opensc Smart Card Drivers
+    command: '/usr/bin/opensc-tool -S app:default:card_drivers:{{ var_smartcard_drivers }}
+
+      '
+    when:
+    - card_drivers.stdout != var_smartcard_drivers
+  when:
+  - configure_opensc_card_drivers | bool
+  - configure_strategy | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - opensc_conf_cd.stat.exists
+  tags:
+  - CCE-89122-6
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-2(1)
+  - NIST-800-53-IA-2(11)
+  - NIST-800-53-IA-2(2)
+  - NIST-800-53-IA-2(3)
+  - NIST-800-53-IA-2(4)
+  - NIST-800-53-IA-2(6)
+  - NIST-800-53-IA-2(7)
+  - PCI-DSS-Req-8.3
+  - PCI-DSSv4-8.4
+  - configure_opensc_card_drivers
+  - configure_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
 
 - name: Gather the package facts
   package_facts:
