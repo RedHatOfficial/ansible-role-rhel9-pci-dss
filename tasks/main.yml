@@ -1,3 +1,33 @@
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+  tags:
+  - CCE-90841-8
+  - CJIS-5.10.4.1
+  - NIST-800-171-3.3.8
+  - NIST-800-171-3.4.1
+  - NIST-800-53-AU-9(3)
+  - NIST-800-53-CM-6(c)
+  - NIST-800-53-CM-6(d)
+  - NIST-800-53-SI-7
+  - NIST-800-53-SI-7(1)
+  - NIST-800-53-SI-7(6)
+  - PCI-DSS-Req-11.5
+  - PCI-DSSv4-11.5.2
+  - high_complexity
+  - high_severity
+  - medium_disruption
+  - no_reboot_needed
+  - restrict_strategy
+  - rpm_verify_hashes
+  when:
+  - high_complexity | bool
+  - high_severity | bool
+  - medium_disruption | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - rpm_verify_hashes | bool
+
 - name: 'Set fact: Package manager reinstall command'
   set_fact:
     package_manager_reinstall_cmd: dnf reinstall -y
@@ -8,6 +38,8 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
   - rpm_verify_hashes | bool
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - ansible_distribution in [ "Fedora", "RedHat", "CentOS", "OracleLinux" ]
   tags:
   - CCE-90841-8
@@ -39,6 +71,8 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
   - rpm_verify_hashes | bool
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - ansible_distribution == "SLES"
   tags:
   - CCE-90841-8
@@ -73,6 +107,8 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
   - rpm_verify_hashes | bool
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - (package_manager_reinstall_cmd is defined)
   tags:
   - CCE-90841-8
@@ -108,6 +144,8 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
   - rpm_verify_hashes | bool
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - files_with_incorrect_hash.stdout_lines is defined
   - (files_with_incorrect_hash.stdout_lines | length > 0)
   tags:
@@ -140,6 +178,8 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
   - rpm_verify_hashes | bool
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - files_with_incorrect_hash.stdout_lines is defined
   - (package_manager_reinstall_cmd is defined and (files_with_incorrect_hash.stdout_lines | length > 0))
   tags:
@@ -162,12 +202,9 @@
   - restrict_strategy
   - rpm_verify_hashes
 
-- name: Read list of files with incorrect ownership
-  command: rpm -Va --nodeps --nosignature --nofiledigest --nosize --nomtime --nordev --nocaps --nolinkto --nomode
-  register: files_with_incorrect_ownership
-  failed_when: files_with_incorrect_ownership.rc > 1
-  changed_when: false
-  check_mode: false
+- name: Gather the package facts
+  package_facts:
+    manager: auto
   tags:
   - CCE-90842-6
   - CJIS-5.10.4.1
@@ -195,6 +232,41 @@
   - restrict_strategy | bool
   - rpm_verify_ownership | bool
 
+- name: Read list of files with incorrect ownership
+  command: rpm -Va --nodeps --nosignature --nofiledigest --nosize --nomtime --nordev --nocaps --nolinkto --nomode
+  register: files_with_incorrect_ownership
+  failed_when: files_with_incorrect_ownership.rc > 1
+  changed_when: false
+  check_mode: false
+  when:
+  - high_complexity | bool
+  - high_severity | bool
+  - medium_disruption | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - rpm_verify_ownership | bool
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
+  tags:
+  - CCE-90842-6
+  - CJIS-5.10.4.1
+  - NIST-800-171-3.3.8
+  - NIST-800-171-3.4.1
+  - NIST-800-53-AU-9(3)
+  - NIST-800-53-CM-6(c)
+  - NIST-800-53-CM-6(d)
+  - NIST-800-53-SI-7
+  - NIST-800-53-SI-7(1)
+  - NIST-800-53-SI-7(6)
+  - PCI-DSS-Req-11.5
+  - PCI-DSSv4-11.5.2
+  - high_complexity
+  - high_severity
+  - medium_disruption
+  - no_reboot_needed
+  - restrict_strategy
+  - rpm_verify_ownership
+
 - name: Create list of packages
   command: rpm -qf "{{ item }}"
   with_items: '{{ files_with_incorrect_ownership.stdout_lines | map(''regex_findall'', ''^[.]+[U|G]+.* (\/.*)'', ''\1'') |
@@ -209,6 +281,8 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
   - rpm_verify_ownership | bool
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - (files_with_incorrect_ownership.stdout_lines | length > 0)
   tags:
   - CCE-90842-6
@@ -240,6 +314,8 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
   - rpm_verify_ownership | bool
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - (files_with_incorrect_ownership.stdout_lines | length > 0)
   tags:
   - CCE-90842-6
@@ -636,9 +712,9 @@
     create: true
   tags:
   - CCE-83450-7
+  - DISA-STIG-RHEL-09-215105
   - DISA-STIG-RHEL-09-671010
   - DISA-STIG-RHEL-09-672030
-  - DISA-STIG-RHEL-09-672045
   - NIST-800-53-AC-17(2)
   - NIST-800-53-AC-17(a)
   - NIST-800-53-CM-6(a)
@@ -655,9 +731,9 @@
   - no_reboot_needed
   - restrict_strategy
   when:
+  - DISA_STIG_RHEL_09_215105 | bool
   - DISA_STIG_RHEL_09_671010 | bool
   - DISA_STIG_RHEL_09_672030 | bool
-  - DISA_STIG_RHEL_09_672045 | bool
   - configure_crypto_policy | bool
   - high_severity | bool
   - low_complexity | bool
@@ -669,9 +745,9 @@
   command: /usr/bin/update-crypto-policies --set {{ var_system_crypto_policy }}
   tags:
   - CCE-83450-7
+  - DISA-STIG-RHEL-09-215105
   - DISA-STIG-RHEL-09-671010
   - DISA-STIG-RHEL-09-672030
-  - DISA-STIG-RHEL-09-672045
   - NIST-800-53-AC-17(2)
   - NIST-800-53-AC-17(a)
   - NIST-800-53-CM-6(a)
@@ -688,9 +764,9 @@
   - no_reboot_needed
   - restrict_strategy
   when:
+  - DISA_STIG_RHEL_09_215105 | bool
   - DISA_STIG_RHEL_09_671010 | bool
   - DISA_STIG_RHEL_09_672030 | bool
-  - DISA_STIG_RHEL_09_672045 | bool
   - configure_crypto_policy | bool
   - high_severity | bool
   - low_complexity | bool
@@ -705,6 +781,7 @@
     regexp: (?i)^\s*CRYPTO_POLICY.*$
   tags:
   - CCE-83445-7
+  - DISA-STIG-RHEL-09-255075
   - NIST-800-53-AC-17(2)
   - NIST-800-53-AC-17(a)
   - NIST-800-53-CM-6(a)
@@ -720,6 +797,7 @@
   - medium_severity
   - reboot_required
   when:
+  - DISA_STIG_RHEL_09_255075 | bool
   - configure_ssh_crypto_policy | bool
   - disable_strategy | bool
   - low_complexity | bool
@@ -763,7 +841,7 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - '"kernel" in ansible_facts.packages'
   tags:
   - CCE-87295-2
   - DISA-STIG-RHEL-09-271090
@@ -3197,7 +3275,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: Ensure PAM Displays Last Logon/Access Notification - Create an authselect custom profile based on sssd profile
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: Ensure PAM Displays Last Logon/Access Notification - Ensure authselect changes are applied
       ansible.builtin.command:
@@ -3572,7 +3657,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: 'Limit Password Reuse: password-auth - Create an authselect custom profile based on sssd profile'
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: 'Limit Password Reuse: password-auth - Ensure authselect changes are applied'
       ansible.builtin.command:
@@ -3804,7 +3896,14 @@
             cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
           when:
           - result_authselect_check_cmd is success
-          - authselect_current_profile is not match("custom/")
+          - authselect_current_profile is not match("^(custom/|local)")
+          - not result_authselect_custom_profile_present.stat.exists
+        - name: 'Limit Password Reuse: password-auth - Create an authselect custom profile based on sssd profile'
+          ansible.builtin.command:
+            cmd: authselect create-profile hardening -b sssd
+          when:
+          - result_authselect_check_cmd is success
+          - authselect_current_profile is match("local")
           - not result_authselect_custom_profile_present.stat.exists
         - name: 'Limit Password Reuse: password-auth - Ensure authselect changes are applied'
           ansible.builtin.command:
@@ -3958,7 +4057,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: 'Limit Password Reuse: password-auth - Create an authselect custom profile based on sssd profile'
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: 'Limit Password Reuse: password-auth - Ensure authselect changes are applied'
       ansible.builtin.command:
@@ -4331,7 +4437,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: 'Limit Password Reuse: system-auth - Create an authselect custom profile based on sssd profile'
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: 'Limit Password Reuse: system-auth - Ensure authselect changes are applied'
       ansible.builtin.command:
@@ -4562,7 +4675,14 @@
             cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
           when:
           - result_authselect_check_cmd is success
-          - authselect_current_profile is not match("custom/")
+          - authselect_current_profile is not match("^(custom/|local)")
+          - not result_authselect_custom_profile_present.stat.exists
+        - name: 'Limit Password Reuse: system-auth - Create an authselect custom profile based on sssd profile'
+          ansible.builtin.command:
+            cmd: authselect create-profile hardening -b sssd
+          when:
+          - result_authselect_check_cmd is success
+          - authselect_current_profile is match("local")
           - not result_authselect_custom_profile_present.stat.exists
         - name: 'Limit Password Reuse: system-auth - Ensure authselect changes are applied'
           ansible.builtin.command:
@@ -4715,7 +4835,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: 'Limit Password Reuse: system-auth - Create an authselect custom profile based on sssd profile'
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: 'Limit Password Reuse: system-auth - Ensure authselect changes are applied'
       ansible.builtin.command:
@@ -5088,7 +5215,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: Limit Password Reuse - Create an authselect custom profile based on sssd profile
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: Limit Password Reuse - Ensure authselect changes are applied
       ansible.builtin.command:
@@ -5317,7 +5451,14 @@
             cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
           when:
           - result_authselect_check_cmd is success
-          - authselect_current_profile is not match("custom/")
+          - authselect_current_profile is not match("^(custom/|local)")
+          - not result_authselect_custom_profile_present.stat.exists
+        - name: Limit Password Reuse - Create an authselect custom profile based on sssd profile
+          ansible.builtin.command:
+            cmd: authselect create-profile hardening -b sssd
+          when:
+          - result_authselect_check_cmd is success
+          - authselect_current_profile is match("local")
           - not result_authselect_custom_profile_present.stat.exists
         - name: Limit Password Reuse - Ensure authselect changes are applied
           ansible.builtin.command:
@@ -5470,7 +5611,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: Limit Password Reuse - Create an authselect custom profile based on sssd profile
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: Limit Password Reuse - Ensure authselect changes are applied
       ansible.builtin.command:
@@ -5956,7 +6104,14 @@
           cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
         when:
         - result_authselect_check_cmd is success
-        - authselect_current_profile is not match("custom/")
+        - authselect_current_profile is not match("^(custom/|local)")
+        - not result_authselect_custom_profile_present.stat.exists
+      - name: Lock Accounts After Failed Password Attempts - Create an authselect custom profile based on sssd profile
+        ansible.builtin.command:
+          cmd: authselect create-profile hardening -b sssd
+        when:
+        - result_authselect_check_cmd is success
+        - authselect_current_profile is match("local")
         - not result_authselect_custom_profile_present.stat.exists
       - name: Lock Accounts After Failed Password Attempts - Ensure authselect changes are applied
         ansible.builtin.command:
@@ -6092,7 +6247,14 @@
           cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
         when:
         - result_authselect_check_cmd is success
-        - authselect_current_profile is not match("custom/")
+        - authselect_current_profile is not match("^(custom/|local)")
+        - not result_authselect_custom_profile_present.stat.exists
+      - name: Lock Accounts After Failed Password Attempts - Create an authselect custom profile based on sssd profile
+        ansible.builtin.command:
+          cmd: authselect create-profile hardening -b sssd
+        when:
+        - result_authselect_check_cmd is success
+        - authselect_current_profile is match("local")
         - not result_authselect_custom_profile_present.stat.exists
       - name: Lock Accounts After Failed Password Attempts - Ensure authselect changes are applied
         ansible.builtin.command:
@@ -6606,7 +6768,14 @@
           cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
         when:
         - result_authselect_check_cmd is success
-        - authselect_current_profile is not match("custom/")
+        - authselect_current_profile is not match("^(custom/|local)")
+        - not result_authselect_custom_profile_present.stat.exists
+      - name: Set Lockout Time for Failed Password Attempts - Create an authselect custom profile based on sssd profile
+        ansible.builtin.command:
+          cmd: authselect create-profile hardening -b sssd
+        when:
+        - result_authselect_check_cmd is success
+        - authselect_current_profile is match("local")
         - not result_authselect_custom_profile_present.stat.exists
       - name: Set Lockout Time for Failed Password Attempts - Ensure authselect changes are applied
         ansible.builtin.command:
@@ -6743,7 +6912,14 @@
           cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
         when:
         - result_authselect_check_cmd is success
-        - authselect_current_profile is not match("custom/")
+        - authselect_current_profile is not match("^(custom/|local)")
+        - not result_authselect_custom_profile_present.stat.exists
+      - name: Set Lockout Time for Failed Password Attempts - Create an authselect custom profile based on sssd profile
+        ansible.builtin.command:
+          cmd: authselect create-profile hardening -b sssd
+        when:
+        - result_authselect_check_cmd is success
+        - authselect_current_profile is match("local")
         - not result_authselect_custom_profile_present.stat.exists
       - name: Set Lockout Time for Failed Password Attempts - Ensure authselect changes are applied
         ansible.builtin.command:
@@ -6948,6 +7124,69 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
 
+- name: Ensure PAM Enforces Password Requirements - Minimum Digit Characters - Find pwquality.conf.d files
+  ansible.builtin.find:
+    paths: /etc/security/pwquality.conf.d/
+    patterns: '*.conf'
+  register: pwquality_conf_d_files
+  when:
+  - DISA_STIG_RHEL_09_611070 | bool
+  - accounts_password_pam_dcredit | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"pam" in ansible_facts.packages'
+  tags:
+  - CCE-83566-0
+  - DISA-STIG-RHEL-09-611070
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(a)
+  - NIST-800-53-IA-5(4)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.3
+  - PCI-DSSv4-8.3
+  - PCI-DSSv4-8.3.6
+  - accounts_password_pam_dcredit
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Ensure PAM Enforces Password Requirements - Minimum Digit Characters - Ensure dcredit is not set in pwquality.conf.d
+  ansible.builtin.lineinfile:
+    path: '{{ item.path }}'
+    regexp: ^\s*\bdcredit\b.*
+    state: absent
+  with_items: '{{ pwquality_conf_d_files.files }}'
+  when:
+  - DISA_STIG_RHEL_09_611070 | bool
+  - accounts_password_pam_dcredit | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"pam" in ansible_facts.packages'
+  tags:
+  - CCE-83566-0
+  - DISA-STIG-RHEL-09-611070
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(a)
+  - NIST-800-53-IA-5(4)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.3
+  - PCI-DSSv4-8.3
+  - PCI-DSSv4-8.3.6
+  - accounts_password_pam_dcredit
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
 - name: Ensure PAM Enforces Password Requirements - Minimum Digit Characters - Ensure PAM variable dcredit is set accordingly
   ansible.builtin.lineinfile:
     create: true
@@ -7007,6 +7246,69 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
+
+- name: Ensure PAM Enforces Password Requirements - Minimum Lowercase Characters - Find pwquality.conf.d files
+  ansible.builtin.find:
+    paths: /etc/security/pwquality.conf.d/
+    patterns: '*.conf'
+  register: pwquality_conf_d_files
+  when:
+  - DISA_STIG_RHEL_09_611065 | bool
+  - accounts_password_pam_lcredit | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"pam" in ansible_facts.packages'
+  tags:
+  - CCE-83570-2
+  - DISA-STIG-RHEL-09-611065
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(a)
+  - NIST-800-53-IA-5(4)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.3
+  - PCI-DSSv4-8.3
+  - PCI-DSSv4-8.3.6
+  - accounts_password_pam_lcredit
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Ensure PAM Enforces Password Requirements - Minimum Lowercase Characters - Ensure lcredit is not set in pwquality.conf.d
+  ansible.builtin.lineinfile:
+    path: '{{ item.path }}'
+    regexp: ^\s*\blcredit\b.*
+    state: absent
+  with_items: '{{ pwquality_conf_d_files.files }}'
+  when:
+  - DISA_STIG_RHEL_09_611065 | bool
+  - accounts_password_pam_lcredit | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"pam" in ansible_facts.packages'
+  tags:
+  - CCE-83570-2
+  - DISA-STIG-RHEL-09-611065
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(a)
+  - NIST-800-53-IA-5(4)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.3
+  - PCI-DSSv4-8.3
+  - PCI-DSSv4-8.3.6
+  - accounts_password_pam_lcredit
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
 
 - name: Ensure PAM Enforces Password Requirements - Minimum Lowercase Characters - Ensure PAM variable lcredit is set accordingly
   ansible.builtin.lineinfile:
@@ -7068,6 +7370,71 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
+
+- name: Ensure PAM Enforces Password Requirements - Minimum Length - Find pwquality.conf.d files
+  ansible.builtin.find:
+    paths: /etc/security/pwquality.conf.d/
+    patterns: '*.conf'
+  register: pwquality_conf_d_files
+  when:
+  - DISA_STIG_RHEL_09_611090 | bool
+  - accounts_password_pam_minlen | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"pam" in ansible_facts.packages'
+  tags:
+  - CCE-83579-3
+  - CJIS-5.6.2.1.1
+  - DISA-STIG-RHEL-09-611090
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(a)
+  - NIST-800-53-IA-5(4)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.3
+  - PCI-DSSv4-8.3
+  - PCI-DSSv4-8.3.6
+  - accounts_password_pam_minlen
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Ensure PAM Enforces Password Requirements - Minimum Length - Ensure minlen is not set in pwquality.conf.d
+  ansible.builtin.lineinfile:
+    path: '{{ item.path }}'
+    regexp: ^\s*\bminlen\b.*
+    state: absent
+  with_items: '{{ pwquality_conf_d_files.files }}'
+  when:
+  - DISA_STIG_RHEL_09_611090 | bool
+  - accounts_password_pam_minlen | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"pam" in ansible_facts.packages'
+  tags:
+  - CCE-83579-3
+  - CJIS-5.6.2.1.1
+  - DISA-STIG-RHEL-09-611090
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(a)
+  - NIST-800-53-IA-5(4)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.3
+  - PCI-DSSv4-8.3
+  - PCI-DSSv4-8.3.6
+  - accounts_password_pam_minlen
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
 
 - name: Ensure PAM Enforces Password Requirements - Minimum Length - Ensure PAM variable minlen is set accordingly
   ansible.builtin.lineinfile:
@@ -7199,7 +7566,7 @@
   lineinfile:
     dest: /etc/login.defs
     regexp: ^#?ENCRYPT_METHOD
-    line: ENCRYPT_METHOD {{ var_password_hashing_algorithm }}
+    line: ENCRYPT_METHOD {{ var_password_hashing_algorithm.split('|')[0] }}
     state: present
     create: true
   when:
@@ -7355,7 +7722,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: Set PAM's Password Hashing Algorithm - Create an authselect custom profile based on sssd profile
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: Set PAM's Password Hashing Algorithm - Ensure authselect changes are applied
       ansible.builtin.command:
@@ -7599,7 +7973,14 @@
         cmd: authselect create-profile hardening -b {{ authselect_current_profile }}
       when:
       - result_authselect_check_cmd is success
-      - authselect_current_profile is not match("custom/")
+      - authselect_current_profile is not match("^(custom/|local)")
+      - not result_authselect_custom_profile_present.stat.exists
+    - name: Set PAM's Password Hashing Algorithm - Create an authselect custom profile based on sssd profile
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b sssd
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is match("local")
       - not result_authselect_custom_profile_present.stat.exists
     - name: Set PAM's Password Hashing Algorithm - Ensure authselect changes are applied
       ansible.builtin.command:
@@ -8833,8 +9214,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   tags:
   - CCE-83848-2
   - CJIS-5.5.2.2
@@ -8865,8 +9247,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - file_exists.stat is defined and file_exists.stat.exists
   tags:
   - CCE-83848-2
@@ -8923,8 +9306,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   tags:
   - CCE-86010-6
   - CJIS-5.5.2.2
@@ -8953,8 +9337,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - file_exists.stat is defined and file_exists.stat.exists
   tags:
   - CCE-86010-6
@@ -9013,8 +9398,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   tags:
   - CCE-83845-8
   - CJIS-5.5.2.2
@@ -9045,8 +9431,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - file_exists.stat is defined and file_exists.stat.exists
   tags:
   - CCE-83845-8
@@ -9103,8 +9490,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   tags:
   - CCE-86016-3
   - CJIS-5.5.2.2
@@ -9133,8 +9521,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - file_exists.stat is defined and file_exists.stat.exists
   tags:
   - CCE-86016-3
@@ -9188,8 +9577,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   tags:
   - CCE-83846-6
   - NIST-800-171-3.4.5
@@ -9216,8 +9606,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - file_exists.stat is defined and file_exists.stat.exists
   tags:
   - CCE-83846-6
@@ -9269,8 +9660,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   tags:
   - CCE-86025-4
   - NIST-800-171-3.4.5
@@ -9297,8 +9689,9 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
-  - '"grub2-common" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
   - file_exists.stat is defined and file_exists.stat.exists
   tags:
   - CCE-86025-4
@@ -9350,6 +9743,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83834-2
   - NIST-800-53-AC-6(1)
@@ -9381,6 +9775,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83834-2
   - NIST-800-53-AC-6(1)
@@ -9413,6 +9808,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83834-2
   - NIST-800-53-AC-6(1)
@@ -9439,6 +9835,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_old_inc is not skipped and rsyslog_new_inc is not skipped
   tags:
   - CCE-83834-2
@@ -9470,6 +9867,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - include_config_output is defined
   register: rsyslog_config_files
   failed_when: false
@@ -9510,6 +9908,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_config_files is not skipped
   tags:
   - CCE-83834-2
@@ -9549,6 +9948,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_config_files is not skipped
   tags:
   - CCE-83834-2
@@ -9577,6 +9977,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83834-2
   - NIST-800-53-AC-6(1)
@@ -9607,6 +10008,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_groupownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83834-2
   - NIST-800-53-AC-6(1)
@@ -9658,6 +10060,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83946-4
   - NIST-800-53-AC-6(1)
@@ -9689,6 +10092,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83946-4
   - NIST-800-53-AC-6(1)
@@ -9721,6 +10125,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83946-4
   - NIST-800-53-AC-6(1)
@@ -9747,6 +10152,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_old_inc is not skipped and rsyslog_new_inc is not skipped
   tags:
   - CCE-83946-4
@@ -9778,6 +10184,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - include_config_output is defined
   register: rsyslog_config_files
   failed_when: false
@@ -9818,6 +10225,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_config_files is not skipped
   tags:
   - CCE-83946-4
@@ -9857,6 +10265,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_config_files is not skipped
   tags:
   - CCE-83946-4
@@ -9885,6 +10294,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83946-4
   - NIST-800-53-AC-6(1)
@@ -9915,6 +10325,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_ownership | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83946-4
   - NIST-800-53-AC-6(1)
@@ -9966,6 +10377,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83689-0
   - NIST-800-53-AC-6(1)
@@ -9997,6 +10409,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83689-0
   - NIST-800-53-AC-6(1)
@@ -10029,6 +10442,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83689-0
   - NIST-800-53-AC-6(1)
@@ -10055,6 +10469,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_old_inc is not skipped and rsyslog_new_inc is not skipped
   tags:
   - CCE-83689-0
@@ -10086,6 +10501,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - include_config_output is defined
   register: rsyslog_config_files
   failed_when: false
@@ -10126,6 +10542,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_config_files is not skipped
   tags:
   - CCE-83689-0
@@ -10165,6 +10582,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   - rsyslog_config_files is not skipped
   tags:
   - CCE-83689-0
@@ -10193,6 +10611,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83689-0
   - NIST-800-53-AC-6(1)
@@ -10223,6 +10642,7 @@
   - no_reboot_needed | bool
   - rsyslog_files_permissions | bool
   - '"kernel" in ansible_facts.packages'
+  - '"rsyslog" in ansible_facts.packages'
   tags:
   - CCE-83689-0
   - NIST-800-53-AC-6(1)
@@ -15058,6 +15478,56 @@
   package_facts:
     manager: auto
   tags:
+  - CCE-86170-8
+  - DISA-STIG-RHEL-09-232040
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - enable_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - package_cron_installed
+  when:
+  - DISA_STIG_RHEL_09_232040 | bool
+  - enable_strategy | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - package_cron_installed | bool
+
+- name: Ensure cronie is installed
+  package:
+    name: cronie
+    state: present
+  when:
+  - DISA_STIG_RHEL_09_232040 | bool
+  - enable_strategy | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - package_cron_installed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86170-8
+  - DISA-STIG-RHEL-09-232040
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - enable_strategy
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - package_cron_installed
+
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+  tags:
   - CCE-84177-5
   - DISA-STIG-RHEL-09-232235
   - NIST-800-53-AC-6(1)
@@ -16734,15 +17204,6 @@
 - name: Gather list of packages
   package_facts:
     manager: auto
-  when:
-  - low_complexity | bool
-  - low_disruption | bool
-  - medium_severity | bool
-  - no_reboot_needed | bool
-  - postfix_network_listening_disabled | bool
-  - restrict_strategy | bool
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - ''
   tags:
   - CCE-90825-1
   - NIST-800-53-CM-6(a)
@@ -16756,6 +17217,13 @@
   - no_reboot_needed
   - postfix_network_listening_disabled
   - restrict_strategy
+  when:
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - postfix_network_listening_disabled | bool
+  - restrict_strategy | bool
 
 - name: Make changes to Postfix configuration file
   lineinfile:
@@ -16772,7 +17240,7 @@
   - no_reboot_needed | bool
   - postfix_network_listening_disabled | bool
   - restrict_strategy | bool
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
+  - '"kernel" in ansible_facts.packages'
   - '"postfix" in ansible_facts.packages'
   - '"postfix" in ansible_facts.packages'
   tags:
@@ -17809,6 +18277,39 @@
   - restrict_strategy
   - sshd_set_keepalive
 
+- name: Set SSH Client Alive Count Max - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
+  when:
+  - DISA_STIG_RHEL_09_255095 | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_set_keepalive | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90805-3
+  - CJIS-5.5.6
+  - DISA-STIG-RHEL-09-255095
+  - NIST-800-171-3.1.11
+  - NIST-800-53-AC-12
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-2(5)
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-SC-10
+  - PCI-DSS-Req-8.1.8
+  - PCI-DSSv4-8.2
+  - PCI-DSSv4-8.2.8
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_set_keepalive
+
 - name: Gather the package facts
   package_facts:
     manager: auto
@@ -17879,6 +18380,41 @@
       state: present
       insertbefore: BOF
       validate: /usr/sbin/sshd -t -f %s
+  when:
+  - DISA_STIG_RHEL_09_255100 | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_set_idle_timeout | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90811-1
+  - CJIS-5.5.6
+  - DISA-STIG-RHEL-09-255100
+  - NIST-800-171-3.1.11
+  - NIST-800-53-AC-12
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-2(5)
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-SC-10
+  - PCI-DSS-Req-8.1.8
+  - PCI-DSSv4-8.2
+  - PCI-DSSv4-8.2.8
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_set_idle_timeout
+
+- name: Set SSH Client Alive Interval - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_255100 | bool
   - low_complexity | bool
@@ -18005,6 +18541,38 @@
   - no_reboot_needed
   - restrict_strategy
 
+- name: Disable Host-Based Authentication - set file mode for /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+    mode: '0600'
+  when:
+  - DISA_STIG_RHEL_09_255080 | bool
+  - disable_host_auth | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90816-0
+  - CJIS-5.5.6
+  - DISA-STIG-RHEL-09-255080
+  - NIST-800-171-3.1.12
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-3
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-CM-7(a)
+  - NIST-800-53-CM-7(b)
+  - PCI-DSSv4-8.3
+  - PCI-DSSv4-8.3.1
+  - disable_host_auth
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
 - name: Gather the package facts
   package_facts:
     manager: auto
@@ -18102,6 +18670,39 @@
   - restrict_strategy
   - sshd_disable_empty_passwords
 
+- name: Disable SSH Access via Empty Passwords - set file mode for /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+    mode: '0600'
+  when:
+  - DISA_STIG_RHEL_09_255040 | bool
+  - high_severity | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_disable_empty_passwords | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90799-8
+  - CJIS-5.5.6
+  - DISA-STIG-RHEL-09-255040
+  - NIST-800-171-3.1.1
+  - NIST-800-171-3.1.5
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-CM-7(a)
+  - NIST-800-53-CM-7(b)
+  - PCI-DSS-Req-2.2.4
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - high_severity
+  - low_complexity
+  - low_disruption
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_disable_empty_passwords
+
 - name: Gather the package facts
   package_facts:
     manager: auto
@@ -18168,6 +18769,37 @@
       state: present
       insertbefore: BOF
       validate: /usr/sbin/sshd -t -f %s
+  when:
+  - DISA_STIG_RHEL_09_255145 | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_disable_rhosts | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90797-2
+  - CJIS-5.5.6
+  - DISA-STIG-RHEL-09-255145
+  - NIST-800-171-3.1.12
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-CM-7(a)
+  - NIST-800-53-CM-7(b)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_disable_rhosts
+
+- name: Disable SSH Support for .rhosts Files - set file mode for /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_255145 | bool
   - low_complexity | bool
@@ -18298,6 +18930,42 @@
   - restrict_strategy
   - sshd_disable_root_login
 
+- name: Disable SSH Root Login - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
+  when:
+  - DISA_STIG_RHEL_09_255045 | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_disable_root_login | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90800-4
+  - CJIS-5.5.6
+  - DISA-STIG-RHEL-09-255045
+  - NIST-800-171-3.1.1
+  - NIST-800-171-3.1.5
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-AC-6(2)
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-CM-7(a)
+  - NIST-800-53-CM-7(b)
+  - NIST-800-53-IA-2
+  - NIST-800-53-IA-2(5)
+  - PCI-DSS-Req-2.2.4
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_disable_root_login
+
 - name: Gather the package facts
   package_facts:
     manager: auto
@@ -18356,6 +19024,29 @@
       state: present
       insertbefore: BOF
       validate: /usr/sbin/sshd -t -f %s
+  when:
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_disable_tcp_forwarding | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90806-1
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_disable_tcp_forwarding
+
+- name: Disable SSH TCP Forwarding - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
   when:
   - low_complexity | bool
   - low_disruption | bool
@@ -18436,6 +19127,32 @@
       state: present
       insertbefore: BOF
       validate: /usr/sbin/sshd -t -f %s
+  when:
+  - DISA_STIG_RHEL_09_255155 | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_disable_x11_forwarding | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90798-0
+  - DISA-STIG-RHEL-09-255155
+  - NIST-800-53-CM-6(b)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_disable_x11_forwarding
+
+- name: Disable X11 Forwarding - set file mode for /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_255155 | bool
   - low_complexity | bool
@@ -18553,6 +19270,38 @@
   - restrict_strategy
   - sshd_do_not_permit_user_env
 
+- name: Do Not Allow SSH Environment Options - set file mode for /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
+    mode: '0600'
+  when:
+  - DISA_STIG_RHEL_09_255085 | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_do_not_permit_user_env | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90803-8
+  - CJIS-5.5.6
+  - DISA-STIG-RHEL-09-255085
+  - NIST-800-171-3.1.12
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-CM-7(a)
+  - NIST-800-53-CM-7(b)
+  - PCI-DSS-Req-2.2.4
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_do_not_permit_user_env
+
 - name: Gather the package facts
   package_facts:
     manager: auto
@@ -18634,6 +19383,31 @@
   - restrict_strategy
   - sshd_enable_pam
 
+- name: Enable PAM - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
+  when:
+  - DISA_STIG_RHEL_09_255050 | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_enable_pam | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86722-6
+  - DISA-STIG-RHEL-09-255050
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_enable_pam
+
 - name: Gather the package facts
   package_facts:
     manager: auto
@@ -18692,6 +19466,29 @@
       state: present
       insertbefore: BOF
       validate: /usr/sbin/sshd -t -f %s
+  when:
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_set_login_grace_time | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86552-7
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_set_login_grace_time
+
+- name: Ensure SSH LoginGraceTime is configured - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
   when:
   - low_complexity | bool
   - low_disruption | bool
@@ -18800,6 +19597,35 @@
   - restrict_strategy
   - sshd_set_loglevel_verbose
 
+- name: Set SSH Daemon LogLevel to VERBOSE - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
+  when:
+  - DISA_STIG_RHEL_09_255030 | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_set_loglevel_verbose | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86923-0
+  - DISA-STIG-RHEL-09-255030
+  - NIST-800-53-AC-17(1)
+  - NIST-800-53-AC-17(a)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-2.2.4
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_set_loglevel_verbose
+
 - name: Gather the package facts
   package_facts:
     manager: auto
@@ -18858,6 +19684,29 @@
       state: present
       insertbefore: BOF
       validate: /usr/sbin/sshd -t -f %s
+  when:
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_set_max_auth_tries | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-90810-3
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_set_max_auth_tries
+
+- name: Set SSH authentication attempt limit - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
   when:
   - low_complexity | bool
   - low_disruption | bool
@@ -18954,6 +19803,29 @@
   - restrict_strategy
   - sshd_set_max_sessions
 
+- name: Set SSH MaxSessions limit - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
+  when:
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_set_max_sessions | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84103-1
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_set_max_sessions
+
 - name: Gather the package facts
   package_facts:
     manager: auto
@@ -19012,6 +19884,29 @@
       state: present
       insertbefore: BOF
       validate: /usr/sbin/sshd -t -f %s
+  when:
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - sshd_set_maxstartups | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-87872-8
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  - sshd_set_maxstartups
+
+- name: Ensure SSH MaxStartups is configured - set file mode for /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+  ansible.builtin.file:
+    path: /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+    mode: '0600'
   when:
   - low_complexity | bool
   - low_disruption | bool
@@ -19442,7 +20337,7 @@
     path: '{{ item }}'
     create: true
     line: -e 2
-    mode: o-rwx
+    mode: g-rwx,o-rwx
   loop:
   - /etc/audit/audit.rules
   - /etc/audit/rules.d/immutable.rules
@@ -19635,7 +20530,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/selinux/ -p wa -k MAC-policy
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_mac_modification | bool
   - low_complexity | bool
@@ -19701,7 +20596,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_mac_modification | bool
   - low_complexity | bool
@@ -19836,13 +20731,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -19871,13 +20767,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -19953,13 +20850,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -19988,13 +20886,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -20134,13 +21033,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F key=audit_rules_networkconfig_modification
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -20172,13 +21072,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F key=audit_rules_networkconfig_modification
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -20256,13 +21157,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F key=audit_rules_networkconfig_modification
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -20294,13 +21196,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F key=audit_rules_networkconfig_modification
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -20469,7 +21372,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/issue -p wa -k audit_rules_networkconfig_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_networkconfig_modification | bool
   - low_complexity | bool
@@ -20537,7 +21440,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_networkconfig_modification | bool
   - low_complexity | bool
@@ -20704,7 +21607,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_networkconfig_modification | bool
   - low_complexity | bool
@@ -20772,7 +21675,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_networkconfig_modification | bool
   - low_complexity | bool
@@ -20939,7 +21842,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_networkconfig_modification | bool
   - low_complexity | bool
@@ -21007,7 +21910,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_networkconfig_modification | bool
   - low_complexity | bool
@@ -21174,7 +22077,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_networkconfig_modification | bool
   - low_complexity | bool
@@ -21242,7 +22145,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_networkconfig_modification | bool
   - low_complexity | bool
@@ -21437,7 +22340,7 @@
     path: '{{ all_files[0] }}'
     line: -w /var/run/utmp -p wa -k session
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_session_events | bool
   - low_complexity | bool
@@ -21505,7 +22408,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_session_events | bool
   - low_complexity | bool
@@ -21672,7 +22575,7 @@
     path: '{{ all_files[0] }}'
     line: -w /var/log/btmp -p wa -k session
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_session_events | bool
   - low_complexity | bool
@@ -21740,7 +22643,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_session_events | bool
   - low_complexity | bool
@@ -21907,7 +22810,7 @@
     path: '{{ all_files[0] }}'
     line: -w /var/log/wtmp -p wa -k session
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_session_events | bool
   - low_complexity | bool
@@ -21975,7 +22878,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_session_events | bool
   - low_complexity | bool
@@ -22110,6 +23013,7 @@
     path: /etc/audit/rules.d/privileged.rules
     line: '{{  item.rule  }}'
     regexp: '{{ item.regex }}'
+    mode: '0600'
     create: true
   when:
   - DISA_STIG_RHEL_09_654010 | bool
@@ -22287,7 +23191,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_sysadmin_actions | bool
   - low_complexity | bool
@@ -22469,7 +23373,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/sudoers -p wa -k actions
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_sysadmin_actions | bool
   - low_complexity | bool
@@ -22543,7 +23447,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_sysadmin_actions | bool
   - low_complexity | bool
@@ -22725,7 +23629,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/sudoers.d/ -p wa -k actions
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_sysadmin_actions | bool
   - low_complexity | bool
@@ -22943,7 +23847,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/group -p wa -k audit_rules_usergroup_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654225 | bool
   - audit_rules_usergroup_modification_group | bool
@@ -23019,7 +23923,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654225 | bool
   - audit_rules_usergroup_modification_group | bool
@@ -23238,7 +24142,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654230 | bool
   - audit_rules_usergroup_modification_gshadow | bool
@@ -23314,7 +24218,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654230 | bool
   - audit_rules_usergroup_modification_gshadow | bool
@@ -23533,7 +24437,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654235 | bool
   - audit_rules_usergroup_modification_opasswd | bool
@@ -23609,7 +24513,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654235 | bool
   - audit_rules_usergroup_modification_opasswd | bool
@@ -23828,7 +24732,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654240 | bool
   - audit_rules_usergroup_modification_passwd | bool
@@ -23904,7 +24808,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654240 | bool
   - audit_rules_usergroup_modification_passwd | bool
@@ -24123,7 +25027,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/shadow -p wa -k audit_rules_usergroup_modification
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654245 | bool
   - audit_rules_usergroup_modification_shadow | bool
@@ -24199,7 +25103,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654245 | bool
   - audit_rules_usergroup_modification_shadow | bool
@@ -24378,7 +25282,7 @@
     path: '{{ all_files[0] }}'
     line: -w /var/log/sudo.log -p wa -k logins
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_sudo_log_events | bool
   - low_complexity | bool
@@ -24438,7 +25342,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_sudo_log_events | bool
   - low_complexity | bool
@@ -24533,13 +25437,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit{{ syscalls | join(',') }} -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset -F key=access-audit-trail
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -24568,13 +25473,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit{{ syscalls | join(',') }} -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset -F key=access-audit-trail
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -24902,13 +25808,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -24940,13 +25847,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -25026,13 +25934,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -25064,13 +25973,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -25215,13 +26125,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -25254,13 +26165,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -25341,13 +26253,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -25380,13 +26293,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -25529,13 +26443,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -25567,13 +26482,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -25652,13 +26568,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -25690,13 +26607,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -25838,13 +26756,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -25876,13 +26795,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -25961,13 +26881,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -25999,13 +26920,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -26148,13 +27070,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -26187,13 +27110,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -26273,13 +27197,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -26312,13 +27237,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -26461,13 +27387,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -26500,13 +27427,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -26586,13 +27514,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -26625,13 +27554,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -26776,13 +27706,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -26817,13 +27748,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -26875,13 +27807,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -26916,13 +27849,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -27004,13 +27938,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27045,13 +27980,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27103,13 +28039,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27144,13 +28081,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -27295,13 +28233,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27336,13 +28275,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27394,13 +28334,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27435,13 +28376,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -27523,13 +28465,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27564,13 +28507,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27622,13 +28566,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27663,13 +28608,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -27813,13 +28759,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27852,13 +28799,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -27939,13 +28887,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -27978,13 +28927,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -28130,13 +29080,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28171,13 +29122,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28229,13 +29181,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28270,13 +29223,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -28358,13 +29312,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28399,13 +29354,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28457,13 +29413,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28498,13 +29455,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -28649,13 +29607,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28690,13 +29649,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28748,13 +29708,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28789,13 +29750,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -28877,13 +29839,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28918,13 +29881,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -28976,13 +29940,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29017,13 +29982,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -29168,13 +30134,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29209,13 +30176,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29267,13 +30235,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29308,13 +30277,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -29396,13 +30366,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29437,13 +30408,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29495,13 +30467,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29536,13 +30509,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -29687,13 +30661,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29728,13 +30703,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29786,13 +30762,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29827,13 +30804,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -29915,13 +30893,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -29956,13 +30935,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -30014,13 +30994,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -30055,13 +31036,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid=0 -F key=perm_mod
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -30206,13 +31188,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -30246,13 +31229,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -30334,13 +31318,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -30374,13 +31359,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -30525,13 +31511,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -30565,13 +31552,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -30652,13 +31640,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -30692,13 +31681,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -30843,13 +31833,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -30883,13 +31874,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -30971,13 +31963,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -31011,13 +32004,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -31163,13 +32157,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -31203,13 +32198,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -31291,13 +32287,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -31331,13 +32328,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -31482,13 +32480,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -31522,13 +32521,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -31609,13 +32609,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -31649,13 +32650,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=delete
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -31863,7 +32865,7 @@
     path: '{{ all_files[0] }}'
     line: -w {{ var_accounts_passwords_pam_faillock_dir }} -p wa -k logins
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654250 | bool
   - audit_rules_login_events_faillock | bool
@@ -31935,7 +32937,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654250 | bool
   - audit_rules_login_events_faillock | bool
@@ -32142,7 +33144,7 @@
     path: '{{ all_files[0] }}'
     line: -w /var/log/lastlog -p wa -k logins
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654255 | bool
   - audit_rules_login_events_lastlog | bool
@@ -32214,7 +33216,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654255 | bool
   - audit_rules_login_events_lastlog | bool
@@ -32421,7 +33423,7 @@
     path: '{{ all_files[0] }}'
     line: -w /var/log/tallylog -p wa -k logins
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654260 | bool
   - audit_rules_login_events_tallylog | bool
@@ -32493,7 +33495,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - DISA_STIG_RHEL_09_654260 | bool
   - audit_rules_login_events_tallylog | bool
@@ -32632,13 +33634,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -32670,13 +33673,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -32753,13 +33757,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -32791,13 +33796,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -32933,13 +33939,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F a0=0x0 -F key=time-change
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -32968,13 +33975,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F a0=0x0 -F key=time-change
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -33049,13 +34057,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F a0=0x0 -F key=time-change
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -33084,13 +34093,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F a0=0x0 -F key=time-change
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -33229,13 +34239,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -33267,13 +34278,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -33351,13 +34363,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -33389,13 +34402,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -33502,13 +34516,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   - name: Declare list of syscalls
@@ -33540,13 +34555,14 @@
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
+      mode: g-rwx,o-rwx
     when: syscalls_found | length > 0 and missing_syscalls | length > 0
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
       line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F key=audit_time_rules
       create: true
-      mode: o-rwx
+      mode: g-rwx,o-rwx
       state: present
     when: syscalls_found | length == 0
   when:
@@ -33743,7 +34759,7 @@
     path: '{{ all_files[0] }}'
     line: -w /etc/localtime -p wa -k audit_time_rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_time_watch_localtime | bool
   - low_complexity | bool
@@ -33811,7 +34827,7 @@
     state: present
     dest: /etc/audit/audit.rules
     create: true
-    mode: '0640'
+    mode: '0600'
   when:
   - audit_rules_time_watch_localtime | bool
   - low_complexity | bool
@@ -33846,7 +34862,6 @@
   tags:
   - CCE-83695-7
   - CJIS-5.4.1.1
-  - DISA-STIG-RHEL-09-652035
   - NIST-800-171-3.3.1
   - NIST-800-53-AU-4(1)
   - NIST-800-53-CM-6(a)
@@ -33860,7 +34875,6 @@
   - medium_severity
   - no_reboot_needed
   when:
-  - DISA_STIG_RHEL_09_652035 | bool
   - auditd_audispd_syslog_plugin_activated | bool
   - configure_strategy | bool
   - low_complexity | bool
@@ -33875,7 +34889,6 @@
     line: active = yes
     create: true
   when:
-  - DISA_STIG_RHEL_09_652035 | bool
   - auditd_audispd_syslog_plugin_activated | bool
   - configure_strategy | bool
   - low_complexity | bool
@@ -33887,7 +34900,6 @@
   tags:
   - CCE-83695-7
   - CJIS-5.4.1.1
-  - DISA-STIG-RHEL-09-652035
   - NIST-800-171-3.3.1
   - NIST-800-53-AU-4(1)
   - NIST-800-53-CM-6(a)
