@@ -162,7 +162,6 @@ DISA_STIG_RHEL_09_654250: true
 DISA_STIG_RHEL_09_654255: true
 DISA_STIG_RHEL_09_654260: true
 DISA_STIG_RHEL_09_654275: true
-DISA_STIG_RHEL_09_671010: true
 DISA_STIG_RHEL_09_672030: true
 DISA_STIG_needed_rules: true
 account_disable_post_pw_expiration: true
@@ -375,6 +374,7 @@ service_rsyncd_disabled: true
 set_password_hashing_algorithm_libuserconf: true
 set_password_hashing_algorithm_logindefs: true
 set_password_hashing_algorithm_systemauth: true
+special_service_block: true
 sshd_disable_empty_passwords: true
 sshd_disable_rhosts: true
 sshd_disable_root_login: true
