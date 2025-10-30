@@ -57,6 +57,7 @@ DISA_STIG_RHEL_09_214015: true
 DISA_STIG_RHEL_09_214025: true
 DISA_STIG_RHEL_09_215040: true
 DISA_STIG_RHEL_09_215060: true
+DISA_STIG_RHEL_09_215105: true
 DISA_STIG_RHEL_09_232040: true
 DISA_STIG_RHEL_09_232055: true
 DISA_STIG_RHEL_09_232060: true
@@ -97,6 +98,7 @@ DISA_STIG_RHEL_09_255030: true
 DISA_STIG_RHEL_09_255040: true
 DISA_STIG_RHEL_09_255045: true
 DISA_STIG_RHEL_09_255050: true
+DISA_STIG_RHEL_09_255075: true
 DISA_STIG_RHEL_09_255080: true
 DISA_STIG_RHEL_09_255085: true
 DISA_STIG_RHEL_09_255095: true
@@ -140,7 +142,6 @@ DISA_STIG_RHEL_09_611140: true
 DISA_STIG_RHEL_09_611155: true
 DISA_STIG_RHEL_09_651010: true
 DISA_STIG_RHEL_09_651015: true
-DISA_STIG_RHEL_09_652035: true
 DISA_STIG_RHEL_09_653010: true
 DISA_STIG_RHEL_09_653015: true
 DISA_STIG_RHEL_09_653040: true
@@ -165,7 +166,6 @@ DISA_STIG_RHEL_09_654260: true
 DISA_STIG_RHEL_09_654275: true
 DISA_STIG_RHEL_09_671010: true
 DISA_STIG_RHEL_09_672030: true
-DISA_STIG_RHEL_09_672045: true
 DISA_STIG_needed_rules: true
 account_disable_post_pw_expiration: true
 accounts_maximum_age_login_defs: true
@@ -340,6 +340,7 @@ package_aide_installed: true
 package_audispd_plugins_installed: true
 package_audit_installed: true
 package_chrony_installed: true
+package_cron_installed: true
 package_cryptsetup_luks_installed: true
 package_dhcp_removed: true
 package_firewalld_installed: true
