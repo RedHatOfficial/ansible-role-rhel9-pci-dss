@@ -5,7 +5,7 @@ inactivity_timeout_value: '900'
 var_screensaver_lock_delay: '10'
 var_sudo_logfile: /var/log/sudo.log
 var_sudo_timestamp_timeout: '5'
-var_authselect_profile: minimal
+var_authselect_profile: sssd
 var_password_pam_remember: '4'
 var_password_pam_remember_control_flag: requisite,required
 var_password_pam_unix_remember: '4'
@@ -97,7 +97,6 @@ DISA_STIG_RHEL_09_255030: true
 DISA_STIG_RHEL_09_255040: true
 DISA_STIG_RHEL_09_255045: true
 DISA_STIG_RHEL_09_255050: true
-DISA_STIG_RHEL_09_255055: true
 DISA_STIG_RHEL_09_255080: true
 DISA_STIG_RHEL_09_255085: true
 DISA_STIG_RHEL_09_255095: true
@@ -132,8 +131,6 @@ DISA_STIG_RHEL_09_431010: true
 DISA_STIG_RHEL_09_431015: true
 DISA_STIG_RHEL_09_432010: true
 DISA_STIG_RHEL_09_432015: true
-DISA_STIG_RHEL_09_611015: true
-DISA_STIG_RHEL_09_611020: true
 DISA_STIG_RHEL_09_611025: true
 DISA_STIG_RHEL_09_611065: true
 DISA_STIG_RHEL_09_611070: true
