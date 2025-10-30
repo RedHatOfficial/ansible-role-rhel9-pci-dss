@@ -79,7 +79,6 @@ DISA_STIG_RHEL_09_232165: true
 DISA_STIG_RHEL_09_232230: true
 DISA_STIG_RHEL_09_232235: true
 DISA_STIG_RHEL_09_232245: true
-DISA_STIG_RHEL_09_232265: true
 DISA_STIG_RHEL_09_232270: true
 DISA_STIG_RHEL_09_251010: true
 DISA_STIG_RHEL_09_251015: true
@@ -98,7 +97,6 @@ DISA_STIG_RHEL_09_255030: true
 DISA_STIG_RHEL_09_255040: true
 DISA_STIG_RHEL_09_255045: true
 DISA_STIG_RHEL_09_255050: true
-DISA_STIG_RHEL_09_255075: true
 DISA_STIG_RHEL_09_255080: true
 DISA_STIG_RHEL_09_255085: true
 DISA_STIG_RHEL_09_255095: true
@@ -210,7 +208,9 @@ audit_rules_login_events_tallylog: true
 audit_rules_mac_modification: true
 audit_rules_media_export: true
 audit_rules_networkconfig_modification: true
-audit_rules_session_events: true
+audit_rules_session_events_btmp: true
+audit_rules_session_events_utmp: true
+audit_rules_session_events_wtmp: true
 audit_rules_suid_privilege_function: true
 audit_rules_sysadmin_actions: true
 audit_rules_time_adjtimex: true
@@ -329,6 +329,7 @@ low_severity: true
 medium_complexity: true
 medium_disruption: true
 medium_severity: true
+network_nmcli_permissions: true
 network_sniffer_disabled: true
 no_direct_root_logins: true
 no_empty_passwords: true
