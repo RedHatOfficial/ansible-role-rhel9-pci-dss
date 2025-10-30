@@ -40,7 +40,7 @@
   - rpm_verify_hashes | bool
   - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
     and not "openshift-kubelet" in ansible_facts.packages )
-  - ansible_distribution in [ "Fedora", "RedHat", "CentOS", "OracleLinux" ]
+  - ansible_distribution in [ "Fedora", "RedHat", "CentOS", "OracleLinux", "AlmaLinux" ]
   tags:
   - CCE-90841-8
   - CJIS-5.10.4.1
@@ -781,7 +781,6 @@
     regexp: (?i)^\s*CRYPTO_POLICY.*$
   tags:
   - CCE-83445-7
-  - DISA-STIG-RHEL-09-255075
   - NIST-800-53-AC-17(2)
   - NIST-800-53-AC-17(a)
   - NIST-800-53-CM-6(a)
@@ -797,7 +796,6 @@
   - medium_severity
   - reboot_required
   when:
-  - DISA_STIG_RHEL_09_255075 | bool
   - configure_ssh_crypto_policy | bool
   - disable_strategy | bool
   - low_complexity | bool
@@ -883,7 +881,7 @@
   - unknown_strategy | bool
 
 - name: Disable GDM Automatic Login
-  ini_file:
+  community.general.ini_file:
     dest: /etc/gdm/custom.conf
     section: daemon
     option: AutomaticLoginEnable
@@ -899,7 +897,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-89663-9
   - DISA-STIG-RHEL-09-271040
@@ -942,7 +939,7 @@
   - unknown_strategy | bool
 
 - name: Disable GNOME3 Automounting - automount
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dconf/db/local.d/00-security-settings
     section: org/gnome/desktop/media-handling
     option: automount
@@ -957,7 +954,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-87734-0
   - NIST-800-171-3.1.7
@@ -987,7 +983,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-87734-0
   - NIST-800-171-3.1.7
@@ -1013,7 +1008,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-87734-0
   - NIST-800-171-3.1.7
@@ -1076,7 +1070,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-90128-0
   - DISA-STIG-RHEL-09-271020
@@ -1110,7 +1103,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-90128-0
   - DISA-STIG-RHEL-09-271020
@@ -1140,7 +1132,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-90128-0
   - DISA-STIG-RHEL-09-271020
@@ -1185,7 +1176,7 @@
   - unknown_strategy | bool
 
 - name: Enable GNOME3 Screensaver Idle Activation
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dconf/db/local.d/00-security-settings
     section: org/gnome/desktop/screensaver
     option: idle-activation-enabled
@@ -1200,7 +1191,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-87755-5
   - CJIS-5.5.5
@@ -1231,7 +1221,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-87755-5
   - CJIS-5.5.5
@@ -1258,7 +1247,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-87755-5
   - CJIS-5.5.5
@@ -1304,7 +1292,7 @@
   - unknown_strategy | bool
 
 - name: Set GNOME3 Screensaver Inactivity Timeout
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dconf/db/local.d/00-security-settings
     section: org/gnome/desktop/session
     option: idle-delay
@@ -1320,7 +1308,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-86510-5
   - CJIS-5.5.5
@@ -1349,7 +1336,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-86510-5
   - CJIS-5.5.5
@@ -1395,7 +1381,7 @@
   - unknown_strategy | bool
 
 - name: Set GNOME3 Screensaver Lock Delay After Activation Period
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dconf/db/local.d/00-security-settings
     section: org/gnome/desktop/screensaver
     option: lock-delay
@@ -1411,7 +1397,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-86954-5
   - DISA-STIG-RHEL-09-271075
@@ -1439,7 +1424,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-86954-5
   - DISA-STIG-RHEL-09-271075
@@ -1497,7 +1481,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   - ansible_distribution == 'SLES'
   tags:
   - CCE-89302-4
@@ -1517,7 +1500,7 @@
   - unknown_strategy
 
 - name: Enable GNOME3 Screensaver Lock After Idle Period
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dconf/db/local.d/00-security-settings
     section: org/gnome/desktop/screensaver
     option: lock-enabled
@@ -1534,7 +1517,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   - ansible_distribution != 'SLES'
   tags:
   - CCE-89302-4
@@ -1569,7 +1551,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   - ansible_distribution != 'SLES'
   tags:
   - CCE-89302-4
@@ -1589,7 +1570,7 @@
   - unknown_strategy
 
 - name: Enable GNOME3 Screensaver Lock After Idle Period
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dconf/db/local.d/00-security-settings
     section: org/gnome/desktop/lockdown
     option: disable-lock-screen
@@ -1606,7 +1587,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   - ansible_distribution == 'SLES'
   tags:
   - CCE-89302-4
@@ -1641,7 +1621,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   - ansible_distribution == 'SLES'
   tags:
   - CCE-89302-4
@@ -1673,7 +1652,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   - ansible_distribution == 'SLES'
   tags:
   - CCE-89302-4
@@ -1704,7 +1682,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   - ansible_distribution == 'SLES'
   tags:
   - CCE-89302-4
@@ -1735,7 +1712,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-89302-4
   - CJIS-5.5.5
@@ -1783,7 +1759,7 @@
   - unknown_strategy | bool
 
 - name: Implement Blank Screensaver
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dconf/db/local.d/00-security-settings
     section: org/gnome/desktop/screensaver
     option: picture-uri
@@ -1799,7 +1775,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-88733-1
   - CJIS-5.5.5
@@ -1833,7 +1808,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-88733-1
   - CJIS-5.5.5
@@ -1863,7 +1837,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-88733-1
   - CJIS-5.5.5
@@ -1923,7 +1896,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-85971-0
   - DISA-STIG-RHEL-09-271070
@@ -1950,7 +1922,6 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - '"gdm" in ansible_facts.packages'
-  - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
   tags:
   - CCE-85971-0
   - DISA-STIG-RHEL-09-271070
@@ -2476,7 +2447,7 @@
   - no_reboot_needed | bool
 
 - name: Ensure GPG check is globally activated
-  ini_file:
+  community.general.ini_file:
     dest: /etc/dnf/dnf.conf
     section: main
     option: gpgcheck
@@ -2558,7 +2529,7 @@
   - no_reboot_needed | bool
 
 - name: Set gpgcheck=1 for each dnf repo
-  ini_file:
+  community.general.ini_file:
     path: '{{ item[0] }}'
     section: '{{ item[1] }}'
     option: gpgcheck
@@ -2906,6 +2877,27 @@
   - medium_severity
   - no_reboot_needed
 
+- name: Set the file_groupowner_etc_issue_net_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_etc_issue_net_newgroup: '0'
+  tags:
+  - CCE-86052-8
+  - PCI-DSSv4-1.2
+  - PCI-DSSv4-1.2.8
+  - configure_strategy
+  - file_groupowner_etc_issue_net
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - configure_strategy | bool
+  - file_groupowner_etc_issue_net | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+
 - name: Test for existence /etc/issue.net
   stat:
     path: /etc/issue.net
@@ -2928,10 +2920,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure group owner 0 on /etc/issue.net
+- name: Ensure group owner on /etc/issue.net
   file:
     path: /etc/issue.net
-    group: '0'
+    group: '{{ file_groupowner_etc_issue_net_newgroup }}'
   when:
   - configure_strategy | bool
   - file_groupowner_etc_issue_net | bool
@@ -2950,6 +2942,27 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_owner_etc_issue_net_newown variable if represented by uid
+  set_fact:
+    file_owner_etc_issue_net_newown: '0'
+  tags:
+  - CCE-86057-7
+  - PCI-DSSv4-1.2
+  - PCI-DSSv4-1.2.8
+  - configure_strategy
+  - file_owner_etc_issue_net
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - configure_strategy | bool
+  - file_owner_etc_issue_net | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/issue.net
   stat:
@@ -2973,10 +2986,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure owner 0 on /etc/issue.net
+- name: Ensure owner on /etc/issue.net
   file:
     path: /etc/issue.net
-    owner: '0'
+    owner: '{{ file_owner_etc_issue_net_newown }}'
   when:
   - configure_strategy | bool
   - file_owner_etc_issue_net | bool
@@ -4180,7 +4193,7 @@
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
       backrefs: true
-      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s+.*)(remember)=[0-9a-zA-Z]+\s*(.*)
+      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s+.*)(remember)=[0-9a-zA-Z]*\s*(.*)
       line: \1\2={{ var_password_pam_remember }} \3
     register: result_pam_accounts_password_pam_pwhistory_remember_password_auth_edit
     when:
@@ -4958,7 +4971,7 @@
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
       backrefs: true
-      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s+.*)(remember)=[0-9a-zA-Z]+\s*(.*)
+      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s+.*)(remember)=[0-9a-zA-Z]*\s*(.*)
       line: \1\2={{ var_password_pam_remember }} \3
     register: result_pam_accounts_password_pam_pwhistory_remember_system_auth_edit
     when:
@@ -5032,7 +5045,7 @@
   - medium_disruption | bool
   - medium_severity | bool
   - no_reboot_needed | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83584-3
   - CJIS-5.6.2.1.1
@@ -5061,7 +5074,7 @@
   - medium_disruption | bool
   - medium_severity | bool
   - no_reboot_needed | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   - result_authselect_present.stat.exists
   tags:
   - CCE-83584-3
@@ -5126,7 +5139,7 @@
   - medium_disruption | bool
   - medium_severity | bool
   - no_reboot_needed | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   - result_authselect_present.stat.exists
   - result_authselect_available_features.stdout is search("with-pwhistory")
   tags:
@@ -5317,7 +5330,7 @@
   - medium_disruption | bool
   - medium_severity | bool
   - no_reboot_needed | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   - '(result_authselect_available_features.stdout is defined and result_authselect_available_features.stdout is not search("with-pwhistory"))
     or result_authselect_available_features is not defined
 
@@ -5349,7 +5362,7 @@
   - medium_disruption | bool
   - medium_severity | bool
   - no_reboot_needed | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83584-3
   - CJIS-5.6.2.1.1
@@ -5523,7 +5536,7 @@
   - medium_disruption | bool
   - medium_severity | bool
   - no_reboot_needed | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   - result_pwhistory_conf_check.stat.exists
   tags:
   - CCE-83584-3
@@ -5731,7 +5744,7 @@
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
       backrefs: true
-      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s+.*)(remember)=[0-9a-zA-Z]+\s*(.*)
+      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s+.*)(remember)=[0-9a-zA-Z]*\s*(.*)
       line: \1\2={{ var_password_pam_unix_remember }} \3
     register: result_pam_accounts_password_pam_unix_remember_edit
     when:
@@ -5750,7 +5763,7 @@
   - medium_disruption | bool
   - medium_severity | bool
   - no_reboot_needed | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   - not result_pwhistory_conf_check.stat.exists
   tags:
   - CCE-83584-3
@@ -7137,7 +7150,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83566-0
   - DISA-STIG-RHEL-09-611070
@@ -7169,7 +7182,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83566-0
   - DISA-STIG-RHEL-09-611070
@@ -7201,7 +7214,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83566-0
   - DISA-STIG-RHEL-09-611070
@@ -7260,7 +7273,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83570-2
   - DISA-STIG-RHEL-09-611065
@@ -7292,7 +7305,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83570-2
   - DISA-STIG-RHEL-09-611065
@@ -7324,7 +7337,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83570-2
   - DISA-STIG-RHEL-09-611065
@@ -7384,7 +7397,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83579-3
   - CJIS-5.6.2.1.1
@@ -7417,7 +7430,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83579-3
   - CJIS-5.6.2.1.1
@@ -7450,7 +7463,7 @@
   - medium_severity | bool
   - no_reboot_needed | bool
   - restrict_strategy | bool
-  - '"pam" in ansible_facts.packages'
+  - '"libpwquality" in ansible_facts.packages'
   tags:
   - CCE-83579-3
   - CJIS-5.6.2.1.1
@@ -9201,6 +9214,38 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_grub2_cfg_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_grub2_cfg_newgroup: '0'
+  when:
+  - DISA_STIG_RHEL_09_212025 | bool
+  - configure_strategy | bool
+  - file_groupowner_grub2_cfg | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
+  tags:
+  - CCE-83848-2
+  - CJIS-5.5.2.2
+  - DISA-STIG-RHEL-09-212025
+  - NIST-800-171-3.4.5
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-7.1
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_grub2_cfg
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Test for existence /boot/grub2/grub.cfg
   stat:
     path: /boot/grub2/grub.cfg
@@ -9234,10 +9279,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure group owner 0 on /boot/grub2/grub.cfg
+- name: Ensure group owner on /boot/grub2/grub.cfg
   file:
     path: /boot/grub2/grub.cfg
-    group: '0'
+    group: '{{ file_groupowner_grub2_cfg_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_212025 | bool
   - configure_strategy | bool
@@ -9293,6 +9338,36 @@
   - low_disruption | bool
   - medium_severity | bool
   - no_reboot_needed | bool
+
+- name: Set the file_groupowner_user_cfg_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_user_cfg_newgroup: '0'
+  when:
+  - configure_strategy | bool
+  - file_groupowner_user_cfg | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
+  tags:
+  - CCE-86010-6
+  - CJIS-5.5.2.2
+  - NIST-800-171-3.4.5
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-7.1
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_user_cfg
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
 
 - name: Test for existence /boot/grub2/user.cfg
   stat:
@@ -9325,10 +9400,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure group owner 0 on /boot/grub2/user.cfg
+- name: Ensure group owner on /boot/grub2/user.cfg
   file:
     path: /boot/grub2/user.cfg
-    group: '0'
+    group: '{{ file_groupowner_user_cfg_newgroup }}'
   when:
   - configure_strategy | bool
   - file_groupowner_user_cfg | bool
@@ -9385,6 +9460,38 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_grub2_cfg_newown variable if represented by uid
+  set_fact:
+    file_owner_grub2_cfg_newown: '0'
+  when:
+  - DISA_STIG_RHEL_09_212030 | bool
+  - configure_strategy | bool
+  - file_owner_grub2_cfg | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
+  tags:
+  - CCE-83845-8
+  - CJIS-5.5.2.2
+  - DISA-STIG-RHEL-09-212030
+  - NIST-800-171-3.4.5
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-7.1
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_grub2_cfg
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Test for existence /boot/grub2/grub.cfg
   stat:
     path: /boot/grub2/grub.cfg
@@ -9418,10 +9525,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure owner 0 on /boot/grub2/grub.cfg
+- name: Ensure owner on /boot/grub2/grub.cfg
   file:
     path: /boot/grub2/grub.cfg
-    owner: '0'
+    owner: '{{ file_owner_grub2_cfg_newown }}'
   when:
   - DISA_STIG_RHEL_09_212030 | bool
   - configure_strategy | bool
@@ -9478,6 +9585,36 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_user_cfg_newown variable if represented by uid
+  set_fact:
+    file_owner_user_cfg_newown: '0'
+  when:
+  - configure_strategy | bool
+  - file_owner_user_cfg | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"/boot/efi" not in ansible_mounts | map(attribute="mount") | list'
+  - ( "grub2-common" in ansible_facts.packages and "kernel" in ansible_facts.packages )
+  - not ( "kernel" in ansible_facts.packages and "rpm-ostree" in ansible_facts.packages and "bootc" in ansible_facts.packages
+    and not "openshift-kubelet" in ansible_facts.packages )
+  tags:
+  - CCE-86016-3
+  - CJIS-5.5.2.2
+  - NIST-800-171-3.4.5
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-7.1
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_user_cfg
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Test for existence /boot/grub2/user.cfg
   stat:
     path: /boot/grub2/user.cfg
@@ -9509,10 +9646,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure owner 0 on /boot/grub2/user.cfg
+- name: Ensure owner on /boot/grub2/user.cfg
   file:
     path: /boot/grub2/user.cfg
-    owner: '0'
+    owner: '{{ file_owner_user_cfg_newown }}'
   when:
   - configure_strategy | bool
   - file_owner_user_cfg | bool
@@ -10763,6 +10900,71 @@
   - medium_severity
   - no_reboot_needed
   - timer_logrotate_enabled
+
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+  tags:
+  - CCE-90061-3
+  - NIST-800-171-3.1.16
+  - NIST-800-53-AC-18(4)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-1.2
+  - PCI-DSSv4-1.2.8
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - network_nmcli_permissions
+  - no_reboot_needed
+  - restrict_strategy
+  when:
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - network_nmcli_permissions | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+
+- name: Ensure non-privileged users do not have access to nmcli
+  community.general.ini_file:
+    path: /etc/polkit-1/localauthority/20-org.d/10-nm-harden-access.pkla
+    section: Disable General User Access to NetworkManager
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+    no_extra_spaces: true
+    create: true
+  loop:
+  - option: Identity
+    value: default
+  - option: Action
+    value: org.freedesktop.NetworkManager.*
+  - option: ResultAny
+    value: 'no'
+  - option: ResultInactive
+    value: 'no'
+  - option: ResultActive
+    value: auth_admin
+  when:
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - network_nmcli_permissions | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"polkit" in ansible_facts.packages'
+  tags:
+  - CCE-90061-3
+  - NIST-800-171-3.1.16
+  - NIST-800-53-AC-18(4)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-1.2
+  - PCI-DSSv4-1.2.8
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - network_nmcli_permissions
+  - no_reboot_needed
+  - restrict_strategy
 
 - name: Ensure System is Not Acting as a Network Sniffer - Gather network interfaces
   ansible.builtin.command:
@@ -12951,6 +13153,15 @@
 
 - name: Service facts
   ansible.builtin.service_facts: null
+  when:
+  - DISA_STIG_RHEL_09_291040 | bool
+  - low_complexity | bool
+  - medium_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - unknown_strategy | bool
+  - wireless_disable_interfaces | bool
+  - ( not ( ansible_virtualization_type in ["docker", "lxc", "openvz", "podman", "container"] ) )
   tags:
   - CCE-84066-0
   - DISA-STIG-RHEL-09-291040
@@ -12970,14 +13181,6 @@
   - no_reboot_needed
   - unknown_strategy
   - wireless_disable_interfaces
-  when:
-  - DISA_STIG_RHEL_09_291040 | bool
-  - low_complexity | bool
-  - medium_disruption | bool
-  - medium_severity | bool
-  - no_reboot_needed | bool
-  - unknown_strategy | bool
-  - wireless_disable_interfaces | bool
 
 - name: Ensure NetworkManager is installed
   ansible.builtin.package:
@@ -12985,6 +13188,15 @@
     state: present
   with_items:
   - NetworkManager
+  when:
+  - DISA_STIG_RHEL_09_291040 | bool
+  - low_complexity | bool
+  - medium_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - unknown_strategy | bool
+  - wireless_disable_interfaces | bool
+  - ( not ( ansible_virtualization_type in ["docker", "lxc", "openvz", "podman", "container"] ) )
   tags:
   - CCE-84066-0
   - DISA-STIG-RHEL-09-291040
@@ -13004,14 +13216,6 @@
   - no_reboot_needed
   - unknown_strategy
   - wireless_disable_interfaces
-  when:
-  - DISA_STIG_RHEL_09_291040 | bool
-  - low_complexity | bool
-  - medium_disruption | bool
-  - medium_severity | bool
-  - no_reboot_needed | bool
-  - unknown_strategy | bool
-  - wireless_disable_interfaces | bool
 
 - name: NetworkManager Deactivate Wireless Network Interfaces
   command: nmcli radio wifi off
@@ -13023,6 +13227,7 @@
   - no_reboot_needed | bool
   - unknown_strategy | bool
   - wireless_disable_interfaces | bool
+  - ( not ( ansible_virtualization_type in ["docker", "lxc", "openvz", "podman", "container"] ) )
   - '''NetworkManager'' in ansible_facts.packages'
   - ansible_facts.services['NetworkManager.service'].state == 'running'
   tags:
@@ -13049,6 +13254,7 @@
   ansible.builtin.set_fact:
     excluded_fstypes:
     - afs
+    - autofs
     - ceph
     - cifs
     - smb3
@@ -13319,6 +13525,31 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
 
+- name: Set the file_groupowner_backup_etc_group_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_backup_etc_group_newgroup: '0'
+  tags:
+  - CCE-83928-2
+  - DISA-STIG-RHEL-09-232105
+  - NIST-800-53-AC-6 (1)
+  - PCI-DSS-Req-8.7
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_backup_etc_group
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232105 | bool
+  - configure_strategy | bool
+  - file_groupowner_backup_etc_group | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+
 - name: Test for existence /etc/group-
   stat:
     path: /etc/group-
@@ -13345,10 +13576,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure group owner 0 on /etc/group-
+- name: Ensure group owner on /etc/group-
   file:
     path: /etc/group-
-    group: '0'
+    group: '{{ file_groupowner_backup_etc_group_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232105 | bool
   - configure_strategy | bool
@@ -13371,6 +13602,31 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_groupowner_backup_etc_passwd_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_backup_etc_passwd_newgroup: '0'
+  tags:
+  - CCE-83933-2
+  - DISA-STIG-RHEL-09-232145
+  - NIST-800-53-AC-6 (1)
+  - PCI-DSS-Req-8.7
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_backup_etc_passwd
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232145 | bool
+  - configure_strategy | bool
+  - file_groupowner_backup_etc_passwd | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/passwd-
   stat:
@@ -13398,10 +13654,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure group owner 0 on /etc/passwd-
+- name: Ensure group owner on /etc/passwd-
   file:
     path: /etc/passwd-
-    group: '0'
+    group: '{{ file_groupowner_backup_etc_passwd_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232145 | bool
   - configure_strategy | bool
@@ -13424,6 +13680,30 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_groupowner_backup_etc_shadow_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_backup_etc_shadow_newgroup: '0'
+  tags:
+  - CCE-83938-1
+  - DISA-STIG-RHEL-09-232165
+  - PCI-DSS-Req-8.7
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_backup_etc_shadow
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232165 | bool
+  - configure_strategy | bool
+  - file_groupowner_backup_etc_shadow | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/shadow-
   stat:
@@ -13450,10 +13730,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure group owner 0 on /etc/shadow-
+- name: Ensure group owner on /etc/shadow-
   file:
     path: /etc/shadow-
-    group: '0'
+    group: '{{ file_groupowner_backup_etc_shadow_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232165 | bool
   - configure_strategy | bool
@@ -13475,6 +13755,33 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_groupowner_etc_group_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_etc_group_newgroup: '0'
+  tags:
+  - CCE-83945-6
+  - CJIS-5.5.2.2
+  - DISA-STIG-RHEL-09-232095
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_etc_group
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232095 | bool
+  - configure_strategy | bool
+  - file_groupowner_etc_group | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/group
   stat:
@@ -13504,10 +13811,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure group owner 0 on /etc/group
+- name: Ensure group owner on /etc/group
   file:
     path: /etc/group
-    group: '0'
+    group: '{{ file_groupowner_etc_group_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232095 | bool
   - configure_strategy | bool
@@ -13532,6 +13839,33 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_groupowner_etc_passwd_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_etc_passwd_newgroup: '0'
+  tags:
+  - CCE-83950-6
+  - CJIS-5.5.2.2
+  - DISA-STIG-RHEL-09-232135
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_etc_passwd
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232135 | bool
+  - configure_strategy | bool
+  - file_groupowner_etc_passwd | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/passwd
   stat:
@@ -13561,10 +13895,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure group owner 0 on /etc/passwd
+- name: Ensure group owner on /etc/passwd
   file:
     path: /etc/passwd
-    group: '0'
+    group: '{{ file_groupowner_etc_passwd_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232135 | bool
   - configure_strategy | bool
@@ -13589,6 +13923,33 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_groupowner_etc_shadow_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_etc_shadow_newgroup: '0'
+  tags:
+  - CCE-83930-8
+  - CJIS-5.5.2.2
+  - DISA-STIG-RHEL-09-232155
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_etc_shadow
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232155 | bool
+  - configure_strategy | bool
+  - file_groupowner_etc_shadow | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/shadow
   stat:
@@ -13618,10 +13979,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure group owner 0 on /etc/shadow
+- name: Ensure group owner on /etc/shadow
   file:
     path: /etc/shadow
-    group: '0'
+    group: '{{ file_groupowner_etc_shadow_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232155 | bool
   - configure_strategy | bool
@@ -13646,6 +14007,31 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_owner_backup_etc_group_newown variable if represented by uid
+  set_fact:
+    file_owner_backup_etc_group_newown: '0'
+  tags:
+  - CCE-83944-9
+  - DISA-STIG-RHEL-09-232100
+  - NIST-800-53-AC-6 (1)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_backup_etc_group
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232100 | bool
+  - configure_strategy | bool
+  - file_owner_backup_etc_group | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/group-
   stat:
@@ -13673,10 +14059,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure owner 0 on /etc/group-
+- name: Ensure owner on /etc/group-
   file:
     path: /etc/group-
-    owner: '0'
+    owner: '{{ file_owner_backup_etc_group_newown }}'
   when:
   - DISA_STIG_RHEL_09_232100 | bool
   - configure_strategy | bool
@@ -13699,6 +14085,31 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_owner_backup_etc_passwd_newown variable if represented by uid
+  set_fact:
+    file_owner_backup_etc_passwd_newown: '0'
+  tags:
+  - CCE-83947-2
+  - DISA-STIG-RHEL-09-232140
+  - NIST-800-53-AC-6 (1)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_backup_etc_passwd
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232140 | bool
+  - configure_strategy | bool
+  - file_owner_backup_etc_passwd | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/passwd-
   stat:
@@ -13726,10 +14137,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure owner 0 on /etc/passwd-
+- name: Ensure owner on /etc/passwd-
   file:
     path: /etc/passwd-
-    owner: '0'
+    owner: '{{ file_owner_backup_etc_passwd_newown }}'
   when:
   - DISA_STIG_RHEL_09_232140 | bool
   - configure_strategy | bool
@@ -13752,6 +14163,31 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_owner_backup_etc_shadow_newown variable if represented by uid
+  set_fact:
+    file_owner_backup_etc_shadow_newown: '0'
+  tags:
+  - CCE-83949-8
+  - DISA-STIG-RHEL-09-232160
+  - NIST-800-53-AC-6 (1)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_backup_etc_shadow
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232160 | bool
+  - configure_strategy | bool
+  - file_owner_backup_etc_shadow | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/shadow-
   stat:
@@ -13779,10 +14215,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure owner 0 on /etc/shadow-
+- name: Ensure owner on /etc/shadow-
   file:
     path: /etc/shadow-
-    owner: '0'
+    owner: '{{ file_owner_backup_etc_shadow_newown }}'
   when:
   - DISA_STIG_RHEL_09_232160 | bool
   - configure_strategy | bool
@@ -13805,6 +14241,33 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_owner_etc_group_newown variable if represented by uid
+  set_fact:
+    file_owner_etc_group_newown: '0'
+  tags:
+  - CCE-83925-8
+  - CJIS-5.5.2.2
+  - DISA-STIG-RHEL-09-232090
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_etc_group
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232090 | bool
+  - configure_strategy | bool
+  - file_owner_etc_group | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/group
   stat:
@@ -13834,10 +14297,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure owner 0 on /etc/group
+- name: Ensure owner on /etc/group
   file:
     path: /etc/group
-    owner: '0'
+    owner: '{{ file_owner_etc_group_newown }}'
   when:
   - DISA_STIG_RHEL_09_232090 | bool
   - configure_strategy | bool
@@ -13862,6 +14325,33 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_owner_etc_passwd_newown variable if represented by uid
+  set_fact:
+    file_owner_etc_passwd_newown: '0'
+  tags:
+  - CCE-83943-1
+  - CJIS-5.5.2.2
+  - DISA-STIG-RHEL-09-232130
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_etc_passwd
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232130 | bool
+  - configure_strategy | bool
+  - file_owner_etc_passwd | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/passwd
   stat:
@@ -13891,10 +14381,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure owner 0 on /etc/passwd
+- name: Ensure owner on /etc/passwd
   file:
     path: /etc/passwd
-    owner: '0'
+    owner: '{{ file_owner_etc_passwd_newown }}'
   when:
   - DISA_STIG_RHEL_09_232130 | bool
   - configure_strategy | bool
@@ -13919,6 +14409,33 @@
   - low_disruption
   - medium_severity
   - no_reboot_needed
+
+- name: Set the file_owner_etc_shadow_newown variable if represented by uid
+  set_fact:
+    file_owner_etc_shadow_newown: '0'
+  tags:
+  - CCE-83926-6
+  - CJIS-5.5.2.2
+  - DISA-STIG-RHEL-09-232150
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSS-Req-8.7.c
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_etc_shadow
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  when:
+  - DISA_STIG_RHEL_09_232150 | bool
+  - configure_strategy | bool
+  - file_owner_etc_shadow | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
 
 - name: Test for existence /etc/shadow
   stat:
@@ -13948,10 +14465,10 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
-- name: Ensure owner 0 on /etc/shadow
+- name: Ensure owner on /etc/shadow
   file:
     path: /etc/shadow
-    owner: '0'
+    owner: '{{ file_owner_etc_shadow_newown }}'
   when:
   - DISA_STIG_RHEL_09_232150 | bool
   - configure_strategy | bool
@@ -15188,19 +15705,19 @@
   - NIST-800-53-SC-7(21)
   - PCI-DSSv4-1.2
   - PCI-DSSv4-1.2.6
+  - configure_strategy
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
-  - restrict_strategy
+  - no_reboot_needed
   - selinux_policytype
   when:
   - DISA_STIG_RHEL_09_431015 | bool
+  - configure_strategy | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
+  - no_reboot_needed | bool
   - selinux_policytype | bool
 
 - name: Configure SELinux Policy
@@ -15230,11 +15747,11 @@
       state: present
   when:
   - DISA_STIG_RHEL_09_431015 | bool
+  - configure_strategy | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
+  - no_reboot_needed | bool
   - selinux_policytype | bool
   - '"kernel" in ansible_facts.packages'
   tags:
@@ -15248,11 +15765,11 @@
   - NIST-800-53-SC-7(21)
   - PCI-DSSv4-1.2
   - PCI-DSSv4-1.2.6
+  - configure_strategy
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
-  - restrict_strategy
+  - no_reboot_needed
   - selinux_policytype
 
 - name: Gather the package facts
@@ -15549,11 +16066,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_cron_d_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_cron_d_newgroup: '0'
+  when:
+  - DISA_STIG_RHEL_09_232235 | bool
+  - configure_strategy | bool
+  - file_groupowner_cron_d | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84177-5
+  - DISA-STIG-RHEL-09-232235
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_cron_d
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure group owner on /etc/cron.d/
   file:
     path: /etc/cron.d/
     state: directory
-    group: '0'
+    group: '{{ file_groupowner_cron_d_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232235 | bool
   - configure_strategy | bool
@@ -15602,11 +16145,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_cron_daily_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_cron_daily_newgroup: '0'
+  when:
+  - DISA_STIG_RHEL_09_232235 | bool
+  - configure_strategy | bool
+  - file_groupowner_cron_daily | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84170-0
+  - DISA-STIG-RHEL-09-232235
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_cron_daily
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure group owner on /etc/cron.daily/
   file:
     path: /etc/cron.daily/
     state: directory
-    group: '0'
+    group: '{{ file_groupowner_cron_daily_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232235 | bool
   - configure_strategy | bool
@@ -15655,11 +16224,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_cron_hourly_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_cron_hourly_newgroup: '0'
+  when:
+  - DISA_STIG_RHEL_09_232235 | bool
+  - configure_strategy | bool
+  - file_groupowner_cron_hourly | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84186-6
+  - DISA-STIG-RHEL-09-232235
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_cron_hourly
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure group owner on /etc/cron.hourly/
   file:
     path: /etc/cron.hourly/
     state: directory
-    group: '0'
+    group: '{{ file_groupowner_cron_hourly_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232235 | bool
   - configure_strategy | bool
@@ -15708,11 +16303,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_cron_monthly_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_cron_monthly_newgroup: '0'
+  when:
+  - DISA_STIG_RHEL_09_232235 | bool
+  - configure_strategy | bool
+  - file_groupowner_cron_monthly | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84189-0
+  - DISA-STIG-RHEL-09-232235
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_cron_monthly
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure group owner on /etc/cron.monthly/
   file:
     path: /etc/cron.monthly/
     state: directory
-    group: '0'
+    group: '{{ file_groupowner_cron_monthly_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232235 | bool
   - configure_strategy | bool
@@ -15761,11 +16382,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_cron_weekly_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_cron_weekly_newgroup: '0'
+  when:
+  - DISA_STIG_RHEL_09_232235 | bool
+  - configure_strategy | bool
+  - file_groupowner_cron_weekly | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84174-2
+  - DISA-STIG-RHEL-09-232235
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_cron_weekly
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure group owner on /etc/cron.weekly/
   file:
     path: /etc/cron.weekly/
     state: directory
-    group: '0'
+    group: '{{ file_groupowner_cron_weekly_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232235 | bool
   - configure_strategy | bool
@@ -15814,6 +16461,32 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_crontab_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_crontab_newgroup: '0'
+  when:
+  - DISA_STIG_RHEL_09_232235 | bool
+  - configure_strategy | bool
+  - file_groupowner_crontab | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84171-8
+  - DISA-STIG-RHEL-09-232235
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_crontab
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Test for existence /etc/crontab
   stat:
     path: /etc/crontab
@@ -15841,10 +16514,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure group owner 0 on /etc/crontab
+- name: Ensure group owner on /etc/crontab
   file:
     path: /etc/crontab
-    group: '0'
+    group: '{{ file_groupowner_crontab_newgroup }}'
   when:
   - DISA_STIG_RHEL_09_232235 | bool
   - configure_strategy | bool
@@ -15894,11 +16567,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_cron_d_newown variable if represented by uid
+  set_fact:
+    file_owner_cron_d_newown: '0'
+  when:
+  - DISA_STIG_RHEL_09_232230 | bool
+  - configure_strategy | bool
+  - file_owner_cron_d | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84169-2
+  - DISA-STIG-RHEL-09-232230
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_cron_d
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure owner on directory /etc/cron.d/
   file:
     path: /etc/cron.d/
     state: directory
-    owner: '0'
+    owner: '{{ file_owner_cron_d_newown }}'
   when:
   - DISA_STIG_RHEL_09_232230 | bool
   - configure_strategy | bool
@@ -15947,11 +16646,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_cron_daily_newown variable if represented by uid
+  set_fact:
+    file_owner_cron_daily_newown: '0'
+  when:
+  - DISA_STIG_RHEL_09_232230 | bool
+  - configure_strategy | bool
+  - file_owner_cron_daily | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84188-2
+  - DISA-STIG-RHEL-09-232230
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_cron_daily
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure owner on directory /etc/cron.daily/
   file:
     path: /etc/cron.daily/
     state: directory
-    owner: '0'
+    owner: '{{ file_owner_cron_daily_newown }}'
   when:
   - DISA_STIG_RHEL_09_232230 | bool
   - configure_strategy | bool
@@ -16000,11 +16725,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_cron_hourly_newown variable if represented by uid
+  set_fact:
+    file_owner_cron_hourly_newown: '0'
+  when:
+  - DISA_STIG_RHEL_09_232230 | bool
+  - configure_strategy | bool
+  - file_owner_cron_hourly | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84168-4
+  - DISA-STIG-RHEL-09-232230
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_cron_hourly
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure owner on directory /etc/cron.hourly/
   file:
     path: /etc/cron.hourly/
     state: directory
-    owner: '0'
+    owner: '{{ file_owner_cron_hourly_newown }}'
   when:
   - DISA_STIG_RHEL_09_232230 | bool
   - configure_strategy | bool
@@ -16053,11 +16804,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_cron_monthly_newown variable if represented by uid
+  set_fact:
+    file_owner_cron_monthly_newown: '0'
+  when:
+  - DISA_STIG_RHEL_09_232230 | bool
+  - configure_strategy | bool
+  - file_owner_cron_monthly | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84179-1
+  - DISA-STIG-RHEL-09-232230
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_cron_monthly
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure owner on directory /etc/cron.monthly/
   file:
     path: /etc/cron.monthly/
     state: directory
-    owner: '0'
+    owner: '{{ file_owner_cron_monthly_newown }}'
   when:
   - DISA_STIG_RHEL_09_232230 | bool
   - configure_strategy | bool
@@ -16106,11 +16883,37 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_cron_weekly_newown variable if represented by uid
+  set_fact:
+    file_owner_cron_weekly_newown: '0'
+  when:
+  - DISA_STIG_RHEL_09_232230 | bool
+  - configure_strategy | bool
+  - file_owner_cron_weekly | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84190-8
+  - DISA-STIG-RHEL-09-232230
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_cron_weekly
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Ensure owner on directory /etc/cron.weekly/
   file:
     path: /etc/cron.weekly/
     state: directory
-    owner: '0'
+    owner: '{{ file_owner_cron_weekly_newown }}'
   when:
   - DISA_STIG_RHEL_09_232230 | bool
   - configure_strategy | bool
@@ -16159,6 +16962,32 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_crontab_newown variable if represented by uid
+  set_fact:
+    file_owner_crontab_newown: '0'
+  when:
+  - DISA_STIG_RHEL_09_232230 | bool
+  - configure_strategy | bool
+  - file_owner_crontab | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-84167-6
+  - DISA-STIG-RHEL-09-232230
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_crontab
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Test for existence /etc/crontab
   stat:
     path: /etc/crontab
@@ -16186,10 +17015,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure owner 0 on /etc/crontab
+- name: Ensure owner on /etc/crontab
   file:
     path: /etc/crontab
-    owner: '0'
+    owner: '{{ file_owner_crontab_newown }}'
   when:
   - DISA_STIG_RHEL_09_232230 | bool
   - configure_strategy | bool
@@ -16240,7 +17069,7 @@
   - no_reboot_needed | bool
 
 - name: Find /etc/cron.d/ file(s)
-  command: 'find -H /etc/cron.d/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
+  command: 'find -L /etc/cron.d/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
   register: files_found
   changed_when: false
   failed_when: false
@@ -16324,7 +17153,7 @@
   - no_reboot_needed | bool
 
 - name: Find /etc/cron.daily/ file(s)
-  command: 'find -H /etc/cron.daily/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
+  command: 'find -L /etc/cron.daily/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
   register: files_found
   changed_when: false
   failed_when: false
@@ -16408,7 +17237,7 @@
   - no_reboot_needed | bool
 
 - name: Find /etc/cron.hourly/ file(s)
-  command: 'find -H /etc/cron.hourly/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
+  command: 'find -L /etc/cron.hourly/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
   register: files_found
   changed_when: false
   failed_when: false
@@ -16492,7 +17321,7 @@
   - no_reboot_needed | bool
 
 - name: Find /etc/cron.monthly/ file(s)
-  command: 'find -H /etc/cron.monthly/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
+  command: 'find -L /etc/cron.monthly/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
   register: files_found
   changed_when: false
   failed_when: false
@@ -16576,7 +17405,7 @@
   - no_reboot_needed | bool
 
 - name: Find /etc/cron.weekly/ file(s)
-  command: 'find -H /etc/cron.weekly/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
+  command: 'find -L /etc/cron.weekly/ -maxdepth 1 -perm /u+s,g+xwrs,o+xwrt  -type d '
   register: files_found
   changed_when: false
   failed_when: false
@@ -16639,7 +17468,6 @@
     manager: auto
   tags:
   - CCE-84176-7
-  - DISA-STIG-RHEL-09-232265
   - NIST-800-53-AC-6(1)
   - NIST-800-53-CM-6(a)
   - PCI-DSSv4-2.2
@@ -16651,7 +17479,6 @@
   - medium_severity
   - no_reboot_needed
   when:
-  - DISA_STIG_RHEL_09_232265 | bool
   - configure_strategy | bool
   - file_permissions_crontab | bool
   - low_complexity | bool
@@ -16664,7 +17491,6 @@
     path: /etc/crontab
   register: file_exists
   when:
-  - DISA_STIG_RHEL_09_232265 | bool
   - configure_strategy | bool
   - file_permissions_crontab | bool
   - low_complexity | bool
@@ -16674,7 +17500,6 @@
   - '"kernel" in ansible_facts.packages'
   tags:
   - CCE-84176-7
-  - DISA-STIG-RHEL-09-232265
   - NIST-800-53-AC-6(1)
   - NIST-800-53-CM-6(a)
   - PCI-DSSv4-2.2
@@ -16691,7 +17516,6 @@
     path: /etc/crontab
     mode: u-xs,g-xwrs,o-xwrt
   when:
-  - DISA_STIG_RHEL_09_232265 | bool
   - configure_strategy | bool
   - file_permissions_crontab | bool
   - low_complexity | bool
@@ -16702,7 +17526,6 @@
   - file_exists.stat is defined and file_exists.stat.exists
   tags:
   - CCE-84176-7
-  - DISA-STIG-RHEL-09-232265
   - NIST-800-53-AC-6(1)
   - NIST-800-53-CM-6(a)
   - PCI-DSSv4-2.2
@@ -16823,6 +17646,28 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_at_allow_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_at_allow_newgroup: '0'
+  when:
+  - configure_strategy | bool
+  - file_groupowner_at_allow | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-87103-8
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_at_allow
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Test for existence /etc/at.allow
   stat:
     path: /etc/at.allow
@@ -16846,10 +17691,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure group owner 0 on /etc/at.allow
+- name: Ensure group owner on /etc/at.allow
   file:
     path: /etc/at.allow
-    group: '0'
+    group: '{{ file_groupowner_at_allow_newgroup }}'
   when:
   - configure_strategy | bool
   - file_groupowner_at_allow | bool
@@ -16893,6 +17738,30 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_groupowner_cron_allow_newgroup variable if represented by gid
+  set_fact:
+    file_groupowner_cron_allow_newgroup: '0'
+  when:
+  - configure_strategy | bool
+  - file_groupowner_cron_allow | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86830-7
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_groupowner_cron_allow
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Test for existence /etc/cron.allow
   stat:
     path: /etc/cron.allow
@@ -16918,10 +17787,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure group owner 0 on /etc/cron.allow
+- name: Ensure group owner on /etc/cron.allow
   file:
     path: /etc/cron.allow
-    group: '0'
+    group: '{{ file_groupowner_cron_allow_newgroup }}'
   when:
   - configure_strategy | bool
   - file_groupowner_cron_allow | bool
@@ -16967,6 +17836,30 @@
   - medium_severity | bool
   - no_reboot_needed | bool
 
+- name: Set the file_owner_cron_allow_newown variable if represented by uid
+  set_fact:
+    file_owner_cron_allow_newown: '0'
+  when:
+  - configure_strategy | bool
+  - file_owner_cron_allow | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86844-8
+  - NIST-800-53-AC-6(1)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-2.2
+  - PCI-DSSv4-2.2.6
+  - configure_strategy
+  - file_owner_cron_allow
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+
 - name: Test for existence /etc/cron.allow
   stat:
     path: /etc/cron.allow
@@ -16992,10 +17885,10 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure owner 0 on /etc/cron.allow
+- name: Ensure owner on /etc/cron.allow
   file:
     path: /etc/cron.allow
-    owner: '0'
+    owner: '{{ file_owner_cron_allow_newown }}'
   when:
   - configure_strategy | bool
   - file_owner_cron_allow | bool
@@ -17154,8 +18047,8 @@
   - medium_severity
   - no_reboot_needed
 
-- name: Ensure dhcp-server is removed
-  package:
+- name: 'Uninstall DHCP Server Package: Ensure dhcp-server is removed'
+  ansible.builtin.package:
     name: dhcp-server
     state: absent
   tags:
@@ -17179,8 +18072,8 @@
   - no_reboot_needed | bool
   - package_dhcp_removed | bool
 
-- name: Ensure ftp is removed
-  package:
+- name: 'Remove ftp Package: Ensure ftp is removed'
+  ansible.builtin.package:
     name: ftp
     state: absent
   tags:
@@ -17716,8 +18609,8 @@
   - no_reboot_needed
   - service_rsyncd_disabled
 
-- name: Ensure telnet-server is removed
-  package:
+- name: 'Uninstall telnet-server Package: Ensure telnet-server is removed'
+  ansible.builtin.package:
     name: telnet-server
     state: absent
   tags:
@@ -17744,8 +18637,8 @@
   - no_reboot_needed | bool
   - package_telnet_server_removed | bool
 
-- name: Ensure telnet is removed
-  package:
+- name: 'Remove telnet Clients: Ensure telnet is removed'
+  ansible.builtin.package:
     name: telnet
     state: absent
   tags:
@@ -17767,8 +18660,8 @@
   - no_reboot_needed | bool
   - package_telnet_removed | bool
 
-- name: Ensure tftp-server is removed
-  package:
+- name: 'Uninstall tftp-server Package: Ensure tftp-server is removed'
+  ansible.builtin.package:
     name: tftp-server
     state: absent
   tags:
@@ -17794,8 +18687,8 @@
   - no_reboot_needed | bool
   - package_tftp_server_removed | bool
 
-- name: Ensure tftp is removed
-  package:
+- name: 'Remove tftp Daemon: Ensure tftp is removed'
+  ansible.builtin.package:
     name: tftp
     state: absent
   tags:
@@ -17816,8 +18709,8 @@
   - no_reboot_needed | bool
   - package_tftp_removed | bool
 
-- name: Ensure net-snmp is removed
-  package:
+- name: 'Uninstall net-snmp Package: Ensure net-snmp is removed'
+  ansible.builtin.package:
     name: net-snmp
     state: absent
   tags:
@@ -18114,7 +19007,7 @@
   - no_reboot_needed | bool
 
 - name: Find /etc/ssh/ file(s)
-  command: find -H /etc/ssh/ -maxdepth 1 -perm /u+xs,g+xws,o+xwt  -type f -regextype posix-extended -regex "^.*\.pub$"
+  command: find -L /etc/ssh/ -maxdepth 1 -perm /u+xs,g+xws,o+xwt  -type f -regextype posix-extended -regex "^.*\.pub$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -20396,7 +21289,8 @@
   - reboot_required | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /etc/selinux/ already exists in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Mandatory Access Controls - Check if watch rule for /etc/selinux/ already exists
+    in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/selinux/\s+-p\s+wa(\s|$)+
@@ -20428,7 +21322,8 @@
   - reboot_required
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key MAC-policy
+- name: Record Events that Modify the System's Mandatory Access Controls - Search /etc/audit/rules.d for other rules with
+    specified key MAC-policy
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)MAC-policy$
@@ -20461,7 +21356,8 @@
   - reboot_required
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/MAC-policy.rules as the recipient for the rule
+- name: Record Events that Modify the System's Mandatory Access Controls - Use /etc/audit/rules.d/MAC-policy.rules as the
+    recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/MAC-policy.rules
@@ -20493,7 +21389,7 @@
   - reboot_required
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify the System's Mandatory Access Controls - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -20525,7 +21421,7 @@
   - reboot_required
   - restrict_strategy
 
-- name: Add watch rule for /etc/selinux/ in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Mandatory Access Controls - Add watch rule for /etc/selinux/ in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/selinux/ -p wa -k MAC-policy
@@ -20558,7 +21454,8 @@
   - reboot_required
   - restrict_strategy
 
-- name: Check if watch rule for /etc/selinux/ already exists in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Mandatory Access Controls - Check if watch rule for /etc/selinux/ already exists
+    in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/selinux/\s+-p\s+wa(\s|$)+
@@ -20590,7 +21487,7 @@
   - reboot_required
   - restrict_strategy
 
-- name: Add watch rule for /etc/selinux/ in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Mandatory Access Controls - Add watch rule for /etc/selinux/ in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/selinux/ -p wa -k MAC-policy
     state: present
@@ -20716,8 +21613,8 @@
   - name: Get path with most syscalls
     set_fact: audit_file="{{ (found_paths_dict | dict2items() | sort(attribute='value') | last).key }}"
     when: found_paths | length >= 1
-  - name: No file with syscall found, set path to /etc/audit/rules.d/perm_mod.rules
-    set_fact: audit_file="/etc/audit/rules.d/perm_mod.rules"
+  - name: No file with syscall found, set path to /etc/audit/rules.d/export.rules
+    set_fact: audit_file="/etc/audit/rules.d/export.rules"
     when: found_paths | length == 0
   - name: Declare found syscalls
     set_fact: syscalls_found="{{ find_command.results | selectattr('matched') | map(attribute='item') | list }}"
@@ -20736,7 +21633,7 @@
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
-      line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
+      line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=export
       create: true
       mode: g-rwx,o-rwx
       state: present
@@ -20772,7 +21669,7 @@
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
-      line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
+      line: -a always,exit -F arch=b32 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=export
       create: true
       mode: g-rwx,o-rwx
       state: present
@@ -20835,8 +21732,8 @@
   - name: Get path with most syscalls
     set_fact: audit_file="{{ (found_paths_dict | dict2items() | sort(attribute='value') | last).key }}"
     when: found_paths | length >= 1
-  - name: No file with syscall found, set path to /etc/audit/rules.d/perm_mod.rules
-    set_fact: audit_file="/etc/audit/rules.d/perm_mod.rules"
+  - name: No file with syscall found, set path to /etc/audit/rules.d/export.rules
+    set_fact: audit_file="/etc/audit/rules.d/export.rules"
     when: found_paths | length == 0
   - name: Declare found syscalls
     set_fact: syscalls_found="{{ find_command.results | selectattr('matched') | map(attribute='item') | list }}"
@@ -20855,7 +21752,7 @@
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
-      line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
+      line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=export
       create: true
       mode: g-rwx,o-rwx
       state: present
@@ -20891,7 +21788,7 @@
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
-      line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=perm_mod
+      line: -a always,exit -F arch=b64 -S {{ syscalls | join(',') }} -F auid>=1000 -F auid!=unset -F key=export
       create: true
       mode: g-rwx,o-rwx
       state: present
@@ -21234,7 +22131,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/issue already exists in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Network Environment - Check if watch rule for /etc/issue already exists in
+    /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/issue\s+-p\s+wa(\s|$)+
@@ -21267,7 +22165,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_networkconfig_modification
+- name: Record Events that Modify the System's Network Environment - Search /etc/audit/rules.d for other rules with specified
+    key audit_rules_networkconfig_modification
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_rules_networkconfig_modification$
@@ -21301,7 +22200,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_networkconfig_modification.rules as the recipient for the rule
+- name: Record Events that Modify the System's Network Environment - Use /etc/audit/rules.d/audit_rules_networkconfig_modification.rules
+    as the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_rules_networkconfig_modification.rules
@@ -21334,7 +22234,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify the System's Network Environment - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -21367,7 +22267,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/issue in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Network Environment - Add watch rule for /etc/issue in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/issue -p wa -k audit_rules_networkconfig_modification
@@ -21401,7 +22301,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/issue already exists in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Network Environment - Check if watch rule for /etc/issue already exists in
+    /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/issue\s+-p\s+wa(\s|$)+
@@ -21434,7 +22335,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/issue in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Network Environment - Add watch rule for /etc/issue in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/issue -p wa -k audit_rules_networkconfig_modification
     state: present
@@ -21469,7 +22370,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/issue.net already exists in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Network Environment - Check if watch rule for /etc/issue.net already exists
+    in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/issue.net\s+-p\s+wa(\s|$)+
@@ -21502,7 +22404,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_networkconfig_modification
+- name: Record Events that Modify the System's Network Environment - Search /etc/audit/rules.d for other rules with specified
+    key audit_rules_networkconfig_modification
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_rules_networkconfig_modification$
@@ -21536,7 +22439,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_networkconfig_modification.rules as the recipient for the rule
+- name: Record Events that Modify the System's Network Environment - Use /etc/audit/rules.d/audit_rules_networkconfig_modification.rules
+    as the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_rules_networkconfig_modification.rules
@@ -21569,7 +22473,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify the System's Network Environment - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -21602,7 +22506,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/issue.net in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Network Environment - Add watch rule for /etc/issue.net in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
@@ -21636,7 +22540,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/issue.net already exists in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Network Environment - Check if watch rule for /etc/issue.net already exists
+    in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/issue.net\s+-p\s+wa(\s|$)+
@@ -21669,7 +22574,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/issue.net in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Network Environment - Add watch rule for /etc/issue.net in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
     state: present
@@ -21704,7 +22609,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/hosts already exists in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Network Environment - Check if watch rule for /etc/hosts already exists in
+    /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/hosts\s+-p\s+wa(\s|$)+
@@ -21737,7 +22643,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_networkconfig_modification
+- name: Record Events that Modify the System's Network Environment - Search /etc/audit/rules.d for other rules with specified
+    key audit_rules_networkconfig_modification
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_rules_networkconfig_modification$
@@ -21771,7 +22678,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_networkconfig_modification.rules as the recipient for the rule
+- name: Record Events that Modify the System's Network Environment - Use /etc/audit/rules.d/audit_rules_networkconfig_modification.rules
+    as the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_rules_networkconfig_modification.rules
@@ -21804,7 +22712,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify the System's Network Environment - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -21837,7 +22745,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/hosts in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Network Environment - Add watch rule for /etc/hosts in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
@@ -21871,7 +22779,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/hosts already exists in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Network Environment - Check if watch rule for /etc/hosts already exists in
+    /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/hosts\s+-p\s+wa(\s|$)+
@@ -21904,7 +22813,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/hosts in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Network Environment - Add watch rule for /etc/hosts in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
     state: present
@@ -21939,7 +22848,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/sysconfig/network already exists in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Network Environment - Check if watch rule for /etc/sysconfig/network already
+    exists in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/sysconfig/network\s+-p\s+wa(\s|$)+
@@ -21972,7 +22882,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_networkconfig_modification
+- name: Record Events that Modify the System's Network Environment - Search /etc/audit/rules.d for other rules with specified
+    key audit_rules_networkconfig_modification
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_rules_networkconfig_modification$
@@ -22006,7 +22917,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_networkconfig_modification.rules as the recipient for the rule
+- name: Record Events that Modify the System's Network Environment - Use /etc/audit/rules.d/audit_rules_networkconfig_modification.rules
+    as the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_rules_networkconfig_modification.rules
@@ -22039,7 +22951,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify the System's Network Environment - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -22072,7 +22984,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/sysconfig/network in /etc/audit/rules.d/
+- name: Record Events that Modify the System's Network Environment - Add watch rule for /etc/sysconfig/network in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification
@@ -22106,7 +23018,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/sysconfig/network already exists in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Network Environment - Check if watch rule for /etc/sysconfig/network already
+    exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/sysconfig/network\s+-p\s+wa(\s|$)+
@@ -22139,7 +23052,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/sysconfig/network in /etc/audit/audit.rules
+- name: Record Events that Modify the System's Network Environment - Add watch rule for /etc/sysconfig/network in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification
     state: present
@@ -22178,466 +23091,208 @@
   package_facts:
     manager: auto
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86198-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_btmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_btmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /var/run/utmp already exists in /etc/audit/rules.d/
-  find:
-    paths: /etc/audit/rules.d
-    contains: ^\s*-w\s+/var/run/utmp\s+-p\s+wa(\s|$)+
-    patterns: '*.rules'
-  register: find_existing_watch_rules_d
-  when:
-  - audit_rules_session_events | bool
-  - low_complexity | bool
-  - low_disruption | bool
-  - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - '"audit" in ansible_facts.packages'
-  - '"kernel" in ansible_facts.packages'
-  tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
-  - PCI-DSSv4-10.2
-  - PCI-DSSv4-10.2.1
-  - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
-  - low_complexity
-  - low_disruption
-  - medium_severity
-  - reboot_required
-  - restrict_strategy
-
-- name: Search /etc/audit/rules.d for other rules with specified key session
-  find:
-    paths: /etc/audit/rules.d
-    contains: ^.*(?:-F key=|-k\s+)session$
-    patterns: '*.rules'
-  register: find_watch_key
-  when:
-  - audit_rules_session_events | bool
-  - low_complexity | bool
-  - low_disruption | bool
-  - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - '"audit" in ansible_facts.packages'
-  - '"kernel" in ansible_facts.packages'
-  - find_existing_watch_rules_d.matched is defined and find_existing_watch_rules_d.matched == 0
-  tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
-  - PCI-DSSv4-10.2
-  - PCI-DSSv4-10.2.1
-  - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
-  - low_complexity
-  - low_disruption
-  - medium_severity
-  - reboot_required
-  - restrict_strategy
-
-- name: Use /etc/audit/rules.d/session.rules as the recipient for the rule
-  set_fact:
-    all_files:
-    - /etc/audit/rules.d/session.rules
-  when:
-  - audit_rules_session_events | bool
-  - low_complexity | bool
-  - low_disruption | bool
-  - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - '"audit" in ansible_facts.packages'
-  - '"kernel" in ansible_facts.packages'
-  - find_watch_key.matched is defined and find_watch_key.matched == 0 and find_existing_watch_rules_d.matched is defined and
-    find_existing_watch_rules_d.matched == 0
-  tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
-  - PCI-DSSv4-10.2
-  - PCI-DSSv4-10.2.1
-  - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
-  - low_complexity
-  - low_disruption
-  - medium_severity
-  - reboot_required
-  - restrict_strategy
-
-- name: Use matched file as the recipient for the rule
-  set_fact:
-    all_files:
-    - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
-  when:
-  - audit_rules_session_events | bool
-  - low_complexity | bool
-  - low_disruption | bool
-  - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - '"audit" in ansible_facts.packages'
-  - '"kernel" in ansible_facts.packages'
-  - find_watch_key.matched is defined and find_watch_key.matched > 0 and find_existing_watch_rules_d.matched is defined and
-    find_existing_watch_rules_d.matched == 0
-  tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
-  - PCI-DSSv4-10.2
-  - PCI-DSSv4-10.2.1
-  - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
-  - low_complexity
-  - low_disruption
-  - medium_severity
-  - reboot_required
-  - restrict_strategy
-
-- name: Add watch rule for /var/run/utmp in /etc/audit/rules.d/
-  lineinfile:
-    path: '{{ all_files[0] }}'
-    line: -w /var/run/utmp -p wa -k session
-    create: true
-    mode: '0600'
-  when:
-  - audit_rules_session_events | bool
-  - low_complexity | bool
-  - low_disruption | bool
-  - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - '"audit" in ansible_facts.packages'
-  - '"kernel" in ansible_facts.packages'
-  - find_existing_watch_rules_d.matched is defined and find_existing_watch_rules_d.matched == 0
-  tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
-  - PCI-DSSv4-10.2
-  - PCI-DSSv4-10.2.1
-  - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
-  - low_complexity
-  - low_disruption
-  - medium_severity
-  - reboot_required
-  - restrict_strategy
-
-- name: Check if watch rule for /var/run/utmp already exists in /etc/audit/audit.rules
-  find:
-    paths: /etc/audit/
-    contains: ^\s*-w\s+/var/run/utmp\s+-p\s+wa(\s|$)+
-    patterns: audit.rules
-  register: find_existing_watch_audit_rules
-  when:
-  - audit_rules_session_events | bool
-  - low_complexity | bool
-  - low_disruption | bool
-  - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - '"audit" in ansible_facts.packages'
-  - '"kernel" in ansible_facts.packages'
-  tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
-  - PCI-DSSv4-10.2
-  - PCI-DSSv4-10.2.1
-  - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
-  - low_complexity
-  - low_disruption
-  - medium_severity
-  - reboot_required
-  - restrict_strategy
-
-- name: Add watch rule for /var/run/utmp in /etc/audit/audit.rules
-  lineinfile:
-    line: -w /var/run/utmp -p wa -k session
-    state: present
-    dest: /etc/audit/audit.rules
-    create: true
-    mode: '0600'
-  when:
-  - audit_rules_session_events | bool
-  - low_complexity | bool
-  - low_disruption | bool
-  - medium_severity | bool
-  - reboot_required | bool
-  - restrict_strategy | bool
-  - '"audit" in ansible_facts.packages'
-  - '"kernel" in ansible_facts.packages'
-  - find_existing_watch_audit_rules.matched is defined and find_existing_watch_audit_rules.matched == 0
-  tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
-  - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
-  - PCI-DSSv4-10.2
-  - PCI-DSSv4-10.2.1
-  - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
-  - low_complexity
-  - low_disruption
-  - medium_severity
-  - reboot_required
-  - restrict_strategy
-
-- name: Check if watch rule for /var/log/btmp already exists in /etc/audit/rules.d/
+- name: Record Attempts to Alter Process and Session Initiation Information btmp - Check if watch rule for /var/log/btmp already
+    exists in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/var/log/btmp\s+-p\s+wa(\s|$)+
     patterns: '*.rules'
   register: find_existing_watch_rules_d
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_btmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86198-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_btmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key session
+- name: Record Attempts to Alter Process and Session Initiation Information btmp - Search /etc/audit/rules.d for other rules
+    with specified key session
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)session$
     patterns: '*.rules'
   register: find_watch_key
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_btmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_existing_watch_rules_d.matched is defined and find_existing_watch_rules_d.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86198-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_btmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/session.rules as the recipient for the rule
+- name: Record Attempts to Alter Process and Session Initiation Information btmp - Use /etc/audit/rules.d/session.rules as
+    the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/session.rules
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_btmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_watch_key.matched is defined and find_watch_key.matched == 0 and find_existing_watch_rules_d.matched is defined and
     find_existing_watch_rules_d.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86198-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_btmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Attempts to Alter Process and Session Initiation Information btmp - Use matched file as the recipient for the
+    rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_btmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_watch_key.matched is defined and find_watch_key.matched > 0 and find_existing_watch_rules_d.matched is defined and
     find_existing_watch_rules_d.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86198-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_btmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/btmp in /etc/audit/rules.d/
+- name: Record Attempts to Alter Process and Session Initiation Information btmp - Add watch rule for /var/log/btmp in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /var/log/btmp -p wa -k session
     create: true
     mode: '0600'
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_btmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_existing_watch_rules_d.matched is defined and find_existing_watch_rules_d.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86198-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_btmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /var/log/btmp already exists in /etc/audit/audit.rules
+- name: Record Attempts to Alter Process and Session Initiation Information btmp - Check if watch rule for /var/log/btmp already
+    exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/var/log/btmp\s+-p\s+wa(\s|$)+
     patterns: audit.rules
   register: find_existing_watch_audit_rules
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_btmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86198-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_btmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/btmp in /etc/audit/audit.rules
+- name: Record Attempts to Alter Process and Session Initiation Information btmp - Add watch rule for /var/log/btmp in /etc/audit/audit.rules
   lineinfile:
     line: -w /var/log/btmp -p wa -k session
     state: present
@@ -22645,234 +23300,471 @@
     create: true
     mode: '0600'
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_btmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_existing_watch_audit_rules.matched is defined and find_existing_watch_audit_rules.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86198-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_btmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /var/log/wtmp already exists in /etc/audit/rules.d/
-  find:
-    paths: /etc/audit/rules.d
-    contains: ^\s*-w\s+/var/log/wtmp\s+-p\s+wa(\s|$)+
-    patterns: '*.rules'
-  register: find_existing_watch_rules_d
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+  tags:
+  - CCE-86202-9
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_utmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_utmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+
+- name: Record Attempts to Alter Process and Session Initiation Information utmp - Check if watch rule for /var/run/utmp already
+    exists in /etc/audit/rules.d/
+  find:
+    paths: /etc/audit/rules.d
+    contains: ^\s*-w\s+/var/run/utmp\s+-p\s+wa(\s|$)+
+    patterns: '*.rules'
+  register: find_existing_watch_rules_d
+  when:
+  - audit_rules_session_events_utmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86202-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_utmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key session
+- name: Record Attempts to Alter Process and Session Initiation Information utmp - Search /etc/audit/rules.d for other rules
+    with specified key session
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)session$
     patterns: '*.rules'
   register: find_watch_key
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_utmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_existing_watch_rules_d.matched is defined and find_existing_watch_rules_d.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86202-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_utmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/session.rules as the recipient for the rule
+- name: Record Attempts to Alter Process and Session Initiation Information utmp - Use /etc/audit/rules.d/session.rules as
+    the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/session.rules
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_utmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_watch_key.matched is defined and find_watch_key.matched == 0 and find_existing_watch_rules_d.matched is defined and
     find_existing_watch_rules_d.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86202-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_utmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Attempts to Alter Process and Session Initiation Information utmp - Use matched file as the recipient for the
+    rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_utmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_watch_key.matched is defined and find_watch_key.matched > 0 and find_existing_watch_rules_d.matched is defined and
     find_existing_watch_rules_d.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86202-9
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_utmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/wtmp in /etc/audit/rules.d/
+- name: Record Attempts to Alter Process and Session Initiation Information utmp - Add watch rule for /var/run/utmp in /etc/audit/rules.d/
+  lineinfile:
+    path: '{{ all_files[0] }}'
+    line: -w /var/run/utmp -p wa -k session
+    create: true
+    mode: '0600'
+  when:
+  - audit_rules_session_events_utmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  - find_existing_watch_rules_d.matched is defined and find_existing_watch_rules_d.matched == 0
+  tags:
+  - CCE-86202-9
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_utmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Record Attempts to Alter Process and Session Initiation Information utmp - Check if watch rule for /var/run/utmp already
+    exists in /etc/audit/audit.rules
+  find:
+    paths: /etc/audit/
+    contains: ^\s*-w\s+/var/run/utmp\s+-p\s+wa(\s|$)+
+    patterns: audit.rules
+  register: find_existing_watch_audit_rules
+  when:
+  - audit_rules_session_events_utmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86202-9
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_utmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Record Attempts to Alter Process and Session Initiation Information utmp - Add watch rule for /var/run/utmp in /etc/audit/audit.rules
+  lineinfile:
+    line: -w /var/run/utmp -p wa -k session
+    state: present
+    dest: /etc/audit/audit.rules
+    create: true
+    mode: '0600'
+  when:
+  - audit_rules_session_events_utmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  - find_existing_watch_audit_rules.matched is defined and find_existing_watch_audit_rules.matched == 0
+  tags:
+  - CCE-86202-9
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_utmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+  tags:
+  - CCE-86203-7
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_wtmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+  when:
+  - audit_rules_session_events_wtmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+
+- name: Record Attempts to Alter Process and Session Initiation Information wtmp - Check if watch rule for /var/log/wtmp already
+    exists in /etc/audit/rules.d/
+  find:
+    paths: /etc/audit/rules.d
+    contains: ^\s*-w\s+/var/log/wtmp\s+-p\s+wa(\s|$)+
+    patterns: '*.rules'
+  register: find_existing_watch_rules_d
+  when:
+  - audit_rules_session_events_wtmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86203-7
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_wtmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Record Attempts to Alter Process and Session Initiation Information wtmp - Search /etc/audit/rules.d for other rules
+    with specified key session
+  find:
+    paths: /etc/audit/rules.d
+    contains: ^.*(?:-F key=|-k\s+)session$
+    patterns: '*.rules'
+  register: find_watch_key
+  when:
+  - audit_rules_session_events_wtmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  - find_existing_watch_rules_d.matched is defined and find_existing_watch_rules_d.matched == 0
+  tags:
+  - CCE-86203-7
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_wtmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Record Attempts to Alter Process and Session Initiation Information wtmp - Use /etc/audit/rules.d/session.rules as
+    the recipient for the rule
+  set_fact:
+    all_files:
+    - /etc/audit/rules.d/session.rules
+  when:
+  - audit_rules_session_events_wtmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  - find_watch_key.matched is defined and find_watch_key.matched == 0 and find_existing_watch_rules_d.matched is defined and
+    find_existing_watch_rules_d.matched == 0
+  tags:
+  - CCE-86203-7
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_wtmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Record Attempts to Alter Process and Session Initiation Information wtmp - Use matched file as the recipient for the
+    rule
+  set_fact:
+    all_files:
+    - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
+  when:
+  - audit_rules_session_events_wtmp | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  - find_watch_key.matched is defined and find_watch_key.matched > 0 and find_existing_watch_rules_d.matched is defined and
+    find_existing_watch_rules_d.matched == 0
+  tags:
+  - CCE-86203-7
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-12.1(iv)
+  - PCI-DSSv4-10.2
+  - PCI-DSSv4-10.2.1
+  - PCI-DSSv4-10.2.1.3
+  - audit_rules_session_events_wtmp
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Record Attempts to Alter Process and Session Initiation Information wtmp - Add watch rule for /var/log/wtmp in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /var/log/wtmp -p wa -k session
     create: true
     mode: '0600'
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_wtmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_existing_watch_rules_d.matched is defined and find_existing_watch_rules_d.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86203-7
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_wtmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /var/log/wtmp already exists in /etc/audit/audit.rules
+- name: Record Attempts to Alter Process and Session Initiation Information wtmp - Check if watch rule for /var/log/wtmp already
+    exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/var/log/wtmp\s+-p\s+wa(\s|$)+
     patterns: audit.rules
   register: find_existing_watch_audit_rules
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_wtmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86203-7
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_wtmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/wtmp in /etc/audit/audit.rules
+- name: Record Attempts to Alter Process and Session Initiation Information wtmp - Add watch rule for /var/log/wtmp in /etc/audit/audit.rules
   lineinfile:
     line: -w /var/log/wtmp -p wa -k session
     state: present
@@ -22880,31 +23772,27 @@
     create: true
     mode: '0600'
   when:
-  - audit_rules_session_events | bool
+  - audit_rules_session_events_wtmp | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
   - find_existing_watch_audit_rules.matched is defined and find_existing_watch_audit_rules.matched == 0
   tags:
-  - CCE-83713-8
-  - CJIS-5.4.1.1
-  - NIST-800-171-3.1.7
+  - CCE-86203-7
   - NIST-800-53-AU-12(c)
-  - NIST-800-53-AU-2(d)
-  - NIST-800-53-CM-6(a)
-  - PCI-DSS-Req-10.2.3
+  - NIST-800-53-AU-12.1(iv)
   - PCI-DSSv4-10.2
   - PCI-DSSv4-10.2.1
   - PCI-DSSv4-10.2.1.3
-  - audit_rules_session_events
+  - audit_rules_session_events_wtmp
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -23149,7 +24037,7 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /etc/sudoers already exists in /etc/audit/audit.rules
+- name: Ensure auditd Collects System Administrator Actions - Check if watch rule for /etc/sudoers already exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/sudoers\s+-p\s+wa(\s|$)+
@@ -23185,7 +24073,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/sudoers in /etc/audit/audit.rules
+- name: Ensure auditd Collects System Administrator Actions - Add watch rule for /etc/sudoers in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/sudoers -p wa -k actions
     state: present
@@ -23223,7 +24111,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/sudoers already exists in /etc/audit/rules.d/
+- name: Ensure auditd Collects System Administrator Actions - Check if watch rule for /etc/sudoers already exists in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/sudoers\s+-p\s+wa(\s|$)+
@@ -23259,7 +24147,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key actions
+- name: Ensure auditd Collects System Administrator Actions - Search /etc/audit/rules.d for other rules with specified key
+    actions
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)actions$
@@ -23296,7 +24185,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/actions.rules as the recipient for the rule
+- name: Ensure auditd Collects System Administrator Actions - Use /etc/audit/rules.d/actions.rules as the recipient for the
+    rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/actions.rules
@@ -23332,7 +24222,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Ensure auditd Collects System Administrator Actions - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -23368,7 +24258,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/sudoers in /etc/audit/rules.d/
+- name: Ensure auditd Collects System Administrator Actions - Add watch rule for /etc/sudoers in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/sudoers -p wa -k actions
@@ -23405,7 +24295,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/sudoers.d/ already exists in /etc/audit/audit.rules
+- name: Ensure auditd Collects System Administrator Actions - Check if watch rule for /etc/sudoers.d/ already exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/sudoers.d/\s+-p\s+wa(\s|$)+
@@ -23441,7 +24331,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/sudoers.d/ in /etc/audit/audit.rules
+- name: Ensure auditd Collects System Administrator Actions - Add watch rule for /etc/sudoers.d/ in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/sudoers.d/ -p wa -k actions
     state: present
@@ -23479,7 +24369,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/sudoers.d/ already exists in /etc/audit/rules.d/
+- name: Ensure auditd Collects System Administrator Actions - Check if watch rule for /etc/sudoers.d/ already exists in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/sudoers.d/\s+-p\s+wa(\s|$)+
@@ -23515,7 +24405,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key actions
+- name: Ensure auditd Collects System Administrator Actions - Search /etc/audit/rules.d for other rules with specified key
+    actions
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)actions$
@@ -23552,7 +24443,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/actions.rules as the recipient for the rule
+- name: Ensure auditd Collects System Administrator Actions - Use /etc/audit/rules.d/actions.rules as the recipient for the
+    rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/actions.rules
@@ -23588,7 +24480,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Ensure auditd Collects System Administrator Actions - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -23624,7 +24516,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/sudoers.d/ in /etc/audit/rules.d/
+- name: Ensure auditd Collects System Administrator Actions - Add watch rule for /etc/sudoers.d/ in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/sudoers.d/ -p wa -k actions
@@ -23682,7 +24574,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - DISA_STIG_RHEL_09_654225 | bool
@@ -23690,10 +24582,11 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /etc/group already exists in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/group - Check if watch rule for /etc/group already exists
+    in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/group\s+-p\s+wa(\s|$)+
@@ -23705,7 +24598,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -23727,10 +24620,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_usergroup_modification
+- name: Record Events that Modify User/Group Information - /etc/group - Search /etc/audit/rules.d for other rules with specified
+    key audit_rules_usergroup_modification
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_rules_usergroup_modification$
@@ -23742,7 +24636,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -23765,10 +24659,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/group - Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules
+    as the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_rules_usergroup_modification.rules
@@ -23778,7 +24673,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -23802,10 +24697,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/group - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -23815,7 +24710,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -23839,10 +24734,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/group in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/group - Add watch rule for /etc/group in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/group -p wa -k audit_rules_usergroup_modification
@@ -23854,7 +24749,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -23877,10 +24772,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/group already exists in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/group - Check if watch rule for /etc/group already exists
+    in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/group\s+-p\s+wa(\s|$)+
@@ -23892,7 +24788,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -23914,10 +24810,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/group in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/group - Add watch rule for /etc/group in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/group -p wa -k audit_rules_usergroup_modification
     state: present
@@ -23930,7 +24826,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -23953,7 +24849,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -23977,7 +24873,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - DISA_STIG_RHEL_09_654230 | bool
@@ -23985,10 +24881,11 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /etc/gshadow already exists in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/gshadow - Check if watch rule for /etc/gshadow already exists
+    in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/gshadow\s+-p\s+wa(\s|$)+
@@ -24000,7 +24897,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24022,10 +24919,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_usergroup_modification
+- name: Record Events that Modify User/Group Information - /etc/gshadow - Search /etc/audit/rules.d for other rules with specified
+    key audit_rules_usergroup_modification
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_rules_usergroup_modification$
@@ -24037,7 +24935,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24060,10 +24958,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/gshadow - Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules
+    as the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_rules_usergroup_modification.rules
@@ -24073,7 +24972,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24097,10 +24996,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/gshadow - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -24110,7 +25009,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24134,10 +25033,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/gshadow in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/gshadow - Add watch rule for /etc/gshadow in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
@@ -24149,7 +25048,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24172,10 +25071,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/gshadow already exists in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/gshadow - Check if watch rule for /etc/gshadow already exists
+    in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/gshadow\s+-p\s+wa(\s|$)+
@@ -24187,7 +25087,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24209,10 +25109,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/gshadow in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/gshadow - Add watch rule for /etc/gshadow in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
     state: present
@@ -24225,7 +25125,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24248,7 +25148,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -24272,7 +25172,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - DISA_STIG_RHEL_09_654235 | bool
@@ -24280,10 +25180,11 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /etc/security/opasswd already exists in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/security/opasswd - Check if watch rule for /etc/security/opasswd
+    already exists in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/security/opasswd\s+-p\s+wa(\s|$)+
@@ -24295,7 +25196,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24317,10 +25218,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_usergroup_modification
+- name: Record Events that Modify User/Group Information - /etc/security/opasswd - Search /etc/audit/rules.d for other rules
+    with specified key audit_rules_usergroup_modification
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_rules_usergroup_modification$
@@ -24332,7 +25234,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24355,10 +25257,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/security/opasswd - Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules
+    as the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_rules_usergroup_modification.rules
@@ -24368,7 +25271,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24392,10 +25295,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/security/opasswd - Use matched file as the recipient for the
+    rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -24405,7 +25309,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24429,10 +25333,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/security/opasswd in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/security/opasswd - Add watch rule for /etc/security/opasswd
+    in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
@@ -24444,7 +25349,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24467,10 +25372,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/security/opasswd already exists in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/security/opasswd - Check if watch rule for /etc/security/opasswd
+    already exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/security/opasswd\s+-p\s+wa(\s|$)+
@@ -24482,7 +25388,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24504,10 +25410,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/security/opasswd in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/security/opasswd - Add watch rule for /etc/security/opasswd
+    in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
     state: present
@@ -24520,7 +25427,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24543,7 +25450,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -24567,7 +25474,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - DISA_STIG_RHEL_09_654240 | bool
@@ -24575,10 +25482,11 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /etc/passwd already exists in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/passwd - Check if watch rule for /etc/passwd already exists
+    in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/passwd\s+-p\s+wa(\s|$)+
@@ -24590,7 +25498,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24612,13 +25520,14 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_usergroup_modification
+- name: Record Events that Modify User/Group Information - /etc/passwd - Search /etc/audit/rules.d for other rules with specified
+    key audit_rules_usergroup_modification_passwd
   find:
     paths: /etc/audit/rules.d
-    contains: ^.*(?:-F key=|-k\s+)audit_rules_usergroup_modification$
+    contains: ^.*(?:-F key=|-k\s+)audit_rules_usergroup_modification_passwd$
     patterns: '*.rules'
   register: find_watch_key
   when:
@@ -24627,7 +25536,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24650,20 +25559,21 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/passwd - Use /etc/audit/rules.d/audit_rules_usergroup_modification_passwd.rules
+    as the recipient for the rule
   set_fact:
     all_files:
-    - /etc/audit/rules.d/audit_rules_usergroup_modification.rules
+    - /etc/audit/rules.d/audit_rules_usergroup_modification_passwd.rules
   when:
   - DISA_STIG_RHEL_09_654240 | bool
   - audit_rules_usergroup_modification_passwd | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24687,10 +25597,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/passwd - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -24700,7 +25610,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24724,13 +25634,13 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/passwd in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/passwd - Add watch rule for /etc/passwd in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
-    line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification
+    line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification_passwd
     create: true
     mode: '0600'
   when:
@@ -24739,7 +25649,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24762,10 +25672,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/passwd already exists in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/passwd - Check if watch rule for /etc/passwd already exists
+    in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/passwd\s+-p\s+wa(\s|$)+
@@ -24777,7 +25688,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24799,12 +25710,12 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/passwd in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/passwd - Add watch rule for /etc/passwd in /etc/audit/audit.rules
   lineinfile:
-    line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification
+    line: -w /etc/passwd -p wa -k audit_rules_usergroup_modification_passwd
     state: present
     dest: /etc/audit/audit.rules
     create: true
@@ -24815,7 +25726,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24838,7 +25749,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -24862,7 +25773,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - DISA_STIG_RHEL_09_654245 | bool
@@ -24870,10 +25781,11 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /etc/shadow already exists in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/shadow - Check if watch rule for /etc/shadow already exists
+    in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/shadow\s+-p\s+wa(\s|$)+
@@ -24885,7 +25797,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24907,10 +25819,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_rules_usergroup_modification
+- name: Record Events that Modify User/Group Information - /etc/shadow - Search /etc/audit/rules.d for other rules with specified
+    key audit_rules_usergroup_modification
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_rules_usergroup_modification$
@@ -24922,7 +25835,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24945,10 +25858,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/shadow - Use /etc/audit/rules.d/audit_rules_usergroup_modification.rules
+    as the recipient for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_rules_usergroup_modification.rules
@@ -24958,7 +25872,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -24982,10 +25896,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Events that Modify User/Group Information - /etc/shadow - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -24995,7 +25909,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25019,10 +25933,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/shadow in /etc/audit/rules.d/
+- name: Record Events that Modify User/Group Information - /etc/shadow - Add watch rule for /etc/shadow in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/shadow -p wa -k audit_rules_usergroup_modification
@@ -25034,7 +25948,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25057,10 +25971,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/shadow already exists in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/shadow - Check if watch rule for /etc/shadow already exists
+    in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/shadow\s+-p\s+wa(\s|$)+
@@ -25072,7 +25987,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25094,10 +26009,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/shadow in /etc/audit/audit.rules
+- name: Record Events that Modify User/Group Information - /etc/shadow - Add watch rule for /etc/shadow in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/shadow -p wa -k audit_rules_usergroup_modification
     state: present
@@ -25110,7 +26025,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25133,7 +26048,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -25150,17 +26065,17 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - audit_sudo_log_events | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /var/log/sudo.log already exists in /etc/audit/rules.d/
+- name: Record Attempts to perform maintenance activities - Check if watch rule for /var/log/sudo.log already exists in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/var/log/sudo.log\s+-p\s+wa(\s|$)+
@@ -25171,7 +26086,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25186,13 +26101,13 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key logins
+- name: Record Attempts to perform maintenance activities - Search /etc/audit/rules.d for other rules with specified key maintenance
   find:
     paths: /etc/audit/rules.d
-    contains: ^.*(?:-F key=|-k\s+)logins$
+    contains: ^.*(?:-F key=|-k\s+)maintenance$
     patterns: '*.rules'
   register: find_watch_key
   when:
@@ -25200,7 +26115,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25216,19 +26131,20 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/logins.rules as the recipient for the rule
+- name: Record Attempts to perform maintenance activities - Use /etc/audit/rules.d/maintenance.rules as the recipient for
+    the rule
   set_fact:
     all_files:
-    - /etc/audit/rules.d/logins.rules
+    - /etc/audit/rules.d/maintenance.rules
   when:
   - audit_sudo_log_events | bool
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25245,10 +26161,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Attempts to perform maintenance activities - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -25257,7 +26173,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25274,13 +26190,13 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/sudo.log in /etc/audit/rules.d/
+- name: Record Attempts to perform maintenance activities - Add watch rule for /var/log/sudo.log in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
-    line: -w /var/log/sudo.log -p wa -k logins
+    line: -w /var/log/sudo.log -p wa -k maintenance
     create: true
     mode: '0600'
   when:
@@ -25288,7 +26204,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25304,10 +26220,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /var/log/sudo.log already exists in /etc/audit/audit.rules
+- name: Record Attempts to perform maintenance activities - Check if watch rule for /var/log/sudo.log already exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/var/log/sudo.log\s+-p\s+wa(\s|$)+
@@ -25318,7 +26234,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25333,12 +26249,12 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/sudo.log in /etc/audit/audit.rules
+- name: Record Attempts to perform maintenance activities - Add watch rule for /var/log/sudo.log in /etc/audit/audit.rules
   lineinfile:
-    line: -w /var/log/sudo.log -p wa -k logins
+    line: -w /var/log/sudo.log -p wa -k maintenance
     state: present
     dest: /etc/audit/audit.rules
     create: true
@@ -25348,7 +26264,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -25364,7 +26280,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -25392,7 +26308,36 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Perform remediation of Audit rules for /var/log/audit
+- name: Record Access Events to Audit Log Directory - Set architecture for audit tasks
+  set_fact:
+    audit_arch: b64
+  when:
+  - directory_access_var_log_audit | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  - ansible_architecture == "aarch64" or ansible_architecture == "ppc64" or ansible_architecture == "ppc64le" or ansible_architecture
+    == "s390x" or ansible_architecture == "x86_64"
+  tags:
+  - CCE-86574-1
+  - NIST-800-53-AC-6(9)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-10.3
+  - PCI-DSSv4-10.3.1
+  - directory_access_var_log_audit
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Record Access Events to Audit Log Directory - Perform remediation of Audit rules for /var/log/audit
   block:
   - name: Declare list of syscalls
     set_fact:
@@ -25401,8 +26346,8 @@
   - name: Check existence of  in /etc/audit/rules.d/
     find:
       paths: /etc/audit/rules.d
-      contains: -a always,exit(( -S |,)\w+)*(( -S |,){{ item }})+(( -S |,)\w+)* -F dir=/var/log/audit/ -F perm=r -F auid>=1000
-        -F auid!=unset (-k\s+|-F\s+key=)\S+\s*$
+      contains: -a always,exit -F arch=b32(( -S |,)\w+)*(( -S |,){{ item }})+(( -S |,)\w+)* -F dir=/var/log/audit/ -F perm=r
+        -F auid>=1000 -F auid!=unset (-k\s+|-F\s+key=)\S+\s*$
       patterns: '*.rules'
     register: find_command
     loop: '{{ (syscall_grouping + syscalls) | unique }}'
@@ -25432,8 +26377,8 @@
   - name: Replace the audit rule in {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
-      regexp: (-a always,exit)(?=.*(?:(?:-S |,)(?:{{ syscalls_per_file[audit_file] | join("|") }}))\b)((?:( -S |,)\w+)+)(
-        -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset (?:-k |-F key=)\w+)
+      regexp: (-a always,exit -F arch=b32)(?=.*(?:(?:-S |,)(?:{{ syscalls_per_file[audit_file] | join("|") }}))\b)((?:( -S
+        |,)\w+)+)( -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset (?:-k |-F key=)\w+)
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
@@ -25442,7 +26387,8 @@
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
-      line: -a always,exit{{ syscalls | join(',') }} -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset -F key=access-audit-trail
+      line: -a always,exit -F arch=b32{{ syscalls | join(',') }} -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset
+        -F key=access-audit-trail
       create: true
       mode: g-rwx,o-rwx
       state: present
@@ -25454,8 +26400,8 @@
   - name: Check existence of  in /etc/audit/audit.rules
     find:
       paths: /etc/audit
-      contains: -a always,exit(( -S |,)\w+)*(( -S |,){{ item }})+(( -S |,)\w+)* -F dir=/var/log/audit/ -F perm=r -F auid>=1000
-        -F auid!=unset (-k\s+|-F\s+key=)\S+\s*$
+      contains: -a always,exit -F arch=b32(( -S |,)\w+)*(( -S |,){{ item }})+(( -S |,)\w+)* -F dir=/var/log/audit/ -F perm=r
+        -F auid>=1000 -F auid!=unset (-k\s+|-F\s+key=)\S+\s*$
       patterns: audit.rules
     register: find_command
     loop: '{{ (syscall_grouping + syscalls) | unique }}'
@@ -25468,8 +26414,8 @@
   - name: Replace the audit rule in {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
-      regexp: (-a always,exit)(?=.*(?:(?:-S |,)(?:{{ syscalls_found | join("|") }}))\b)((?:( -S |,)\w+)+)( -F dir=/var/log/audit/
-        -F perm=r -F auid>=1000 -F auid!=unset (?:-k |-F key=)\w+)
+      regexp: (-a always,exit -F arch=b32)(?=.*(?:(?:-S |,)(?:{{ syscalls_found | join("|") }}))\b)((?:( -S |,)\w+)+)( -F
+        dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset (?:-k |-F key=)\w+)
       line: \1\2\3{{ missing_syscalls | join("\3") }}\4
       backrefs: true
       state: present
@@ -25478,7 +26424,8 @@
   - name: Add the audit rule to {{ audit_file }}
     lineinfile:
       path: '{{ audit_file }}'
-      line: -a always,exit{{ syscalls | join(',') }} -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset -F key=access-audit-trail
+      line: -a always,exit -F arch=b32{{ syscalls | join(',') }} -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset
+        -F key=access-audit-trail
       create: true
       mode: g-rwx,o-rwx
       state: present
@@ -25492,6 +26439,124 @@
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
+  tags:
+  - CCE-86574-1
+  - NIST-800-53-AC-6(9)
+  - NIST-800-53-AU-12(c)
+  - NIST-800-53-AU-2(d)
+  - NIST-800-53-CM-6(a)
+  - PCI-DSSv4-10.3
+  - PCI-DSSv4-10.3.1
+  - directory_access_var_log_audit
+  - low_complexity
+  - low_disruption
+  - medium_severity
+  - no_reboot_needed
+  - restrict_strategy
+
+- name: Record Access Events to Audit Log Directory - Perform remediation of Audit rules for /var/log/audit for x86_64 platform
+  block:
+  - name: Declare list of syscalls
+    set_fact:
+      syscalls: []
+      syscall_grouping: []
+  - name: Check existence of  in /etc/audit/rules.d/
+    find:
+      paths: /etc/audit/rules.d
+      contains: -a always,exit -F arch=b64(( -S |,)\w+)*(( -S |,){{ item }})+(( -S |,)\w+)* -F dir=/var/log/audit/ -F perm=r
+        -F auid>=1000 -F auid!=unset (-k\s+|-F\s+key=)\S+\s*$
+      patterns: '*.rules'
+    register: find_command
+    loop: '{{ (syscall_grouping + syscalls) | unique }}'
+  - name: Reset syscalls found per file
+    set_fact:
+      syscalls_per_file: {}
+      found_paths_dict: {}
+  - name: Declare syscalls found per file
+    set_fact: syscalls_per_file="{{ syscalls_per_file | combine( {item.files[0].path :[item.item] + syscalls_per_file.get(item.files[0].path,
+      []) } ) }}"
+    loop: '{{ find_command.results | selectattr(''matched'') | list }}'
+  - name: Declare files where syscalls were found
+    set_fact: found_paths="{{ find_command.results | map(attribute='files') | flatten | map(attribute='path') | list }}"
+  - name: Count occurrences of syscalls in paths
+    set_fact: found_paths_dict="{{ found_paths_dict | combine({ item:1+found_paths_dict.get(item, 0) }) }}"
+    loop: '{{ find_command.results | map(attribute=''files'') | flatten | map(attribute=''path'') | list }}'
+  - name: Get path with most syscalls
+    set_fact: audit_file="{{ (found_paths_dict | dict2items() | sort(attribute='value') | last).key }}"
+    when: found_paths | length >= 1
+  - name: No file with syscall found, set path to /etc/audit/rules.d/access-audit-trail.rules
+    set_fact: audit_file="/etc/audit/rules.d/access-audit-trail.rules"
+    when: found_paths | length == 0
+  - name: Declare found syscalls
+    set_fact: syscalls_found="{{ find_command.results | selectattr('matched') | map(attribute='item') | list }}"
+  - name: Declare missing syscalls
+    set_fact: missing_syscalls="{{ syscalls | difference(syscalls_found) }}"
+  - name: Replace the audit rule in {{ audit_file }}
+    lineinfile:
+      path: '{{ audit_file }}'
+      regexp: (-a always,exit -F arch=b64)(?=.*(?:(?:-S |,)(?:{{ syscalls_per_file[audit_file] | join("|") }}))\b)((?:( -S
+        |,)\w+)+)( -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset (?:-k |-F key=)\w+)
+      line: \1\2\3{{ missing_syscalls | join("\3") }}\4
+      backrefs: true
+      state: present
+      mode: g-rwx,o-rwx
+    when: syscalls_found | length > 0 and missing_syscalls | length > 0
+  - name: Add the audit rule to {{ audit_file }}
+    lineinfile:
+      path: '{{ audit_file }}'
+      line: -a always,exit -F arch=b64{{ syscalls | join(',') }} -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset
+        -F key=access-audit-trail
+      create: true
+      mode: g-rwx,o-rwx
+      state: present
+    when: syscalls_found | length == 0
+  - name: Declare list of syscalls
+    set_fact:
+      syscalls: []
+      syscall_grouping: []
+  - name: Check existence of  in /etc/audit/audit.rules
+    find:
+      paths: /etc/audit
+      contains: -a always,exit -F arch=b64(( -S |,)\w+)*(( -S |,){{ item }})+(( -S |,)\w+)* -F dir=/var/log/audit/ -F perm=r
+        -F auid>=1000 -F auid!=unset (-k\s+|-F\s+key=)\S+\s*$
+      patterns: audit.rules
+    register: find_command
+    loop: '{{ (syscall_grouping + syscalls) | unique }}'
+  - name: Set path to /etc/audit/audit.rules
+    set_fact: audit_file="/etc/audit/audit.rules"
+  - name: Declare found syscalls
+    set_fact: syscalls_found="{{ find_command.results | selectattr('matched') | map(attribute='item') | list }}"
+  - name: Declare missing syscalls
+    set_fact: missing_syscalls="{{ syscalls | difference(syscalls_found) }}"
+  - name: Replace the audit rule in {{ audit_file }}
+    lineinfile:
+      path: '{{ audit_file }}'
+      regexp: (-a always,exit -F arch=b64)(?=.*(?:(?:-S |,)(?:{{ syscalls_found | join("|") }}))\b)((?:( -S |,)\w+)+)( -F
+        dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset (?:-k |-F key=)\w+)
+      line: \1\2\3{{ missing_syscalls | join("\3") }}\4
+      backrefs: true
+      state: present
+      mode: g-rwx,o-rwx
+    when: syscalls_found | length > 0 and missing_syscalls | length > 0
+  - name: Add the audit rule to {{ audit_file }}
+    lineinfile:
+      path: '{{ audit_file }}'
+      line: -a always,exit -F arch=b64{{ syscalls | join(',') }} -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=unset
+        -F key=access-audit-trail
+      create: true
+      mode: g-rwx,o-rwx
+      state: present
+    when: syscalls_found | length == 0
+  when:
+  - directory_access_var_log_audit | bool
+  - low_complexity | bool
+  - low_disruption | bool
+  - medium_severity | bool
+  - no_reboot_needed | bool
+  - restrict_strategy | bool
+  - '"audit" in ansible_facts.packages'
+  - '"kernel" in ansible_facts.packages'
+  - audit_arch == "b64"
   tags:
   - CCE-86574-1
   - NIST-800-53-AC-6(9)
@@ -31149,6 +32214,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of rename in /etc/audit/rules.d/
     find:
@@ -31207,6 +32273,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of rename in /etc/audit/audit.rules
     find:
@@ -31279,6 +32346,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of rename in /etc/audit/rules.d/
     find:
@@ -31337,6 +32405,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of rename in /etc/audit/audit.rules
     find:
@@ -31472,6 +32541,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of renameat in /etc/audit/rules.d/
     find:
@@ -31530,6 +32600,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of renameat in /etc/audit/audit.rules
     find:
@@ -31601,6 +32672,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of renameat in /etc/audit/rules.d/
     find:
@@ -31659,6 +32731,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of renameat in /etc/audit/audit.rules
     find:
@@ -31794,6 +32867,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of rmdir in /etc/audit/rules.d/
     find:
@@ -31852,6 +32926,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of rmdir in /etc/audit/audit.rules
     find:
@@ -31924,6 +32999,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of rmdir in /etc/audit/rules.d/
     find:
@@ -31982,6 +33058,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of rmdir in /etc/audit/audit.rules
     find:
@@ -32118,6 +33195,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of unlink in /etc/audit/rules.d/
     find:
@@ -32176,6 +33254,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of unlink in /etc/audit/audit.rules
     find:
@@ -32248,6 +33327,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of unlink in /etc/audit/rules.d/
     find:
@@ -32306,6 +33386,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of unlink in /etc/audit/audit.rules
     find:
@@ -32441,6 +33522,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of unlinkat in /etc/audit/rules.d/
     find:
@@ -32499,6 +33581,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of unlinkat in /etc/audit/audit.rules
     find:
@@ -32570,6 +33653,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of unlinkat in /etc/audit/rules.d/
     find:
@@ -32628,6 +33712,7 @@
       - unlinkat
       - rename
       - renameat
+      - renameat2
       - rmdir
   - name: Check existence of unlinkat in /etc/audit/audit.rules
     find:
@@ -32708,7 +33793,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - DISA_STIG_RHEL_09_654250 | bool
@@ -32716,10 +33801,11 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for {{ var_accounts_passwords_pam_faillock_dir }} already exists in /etc/audit/rules.d/
+- name: Record Attempts to Alter Logon and Logout Events - faillock - Check if watch rule for {{ var_accounts_passwords_pam_faillock_dir
+    }} already exists in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+{{ var_accounts_passwords_pam_faillock_dir }}\s+-p\s+wa(\s|$)+
@@ -32731,7 +33817,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -32751,10 +33837,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key logins
+- name: Record Attempts to Alter Logon and Logout Events - faillock - Search /etc/audit/rules.d for other rules with specified
+    key logins
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)logins$
@@ -32766,7 +33853,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -32787,10 +33874,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/logins.rules as the recipient for the rule
+- name: Record Attempts to Alter Logon and Logout Events - faillock - Use /etc/audit/rules.d/logins.rules as the recipient
+    for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/logins.rules
@@ -32800,7 +33888,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -32822,10 +33910,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Attempts to Alter Logon and Logout Events - faillock - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -32835,7 +33923,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -32857,10 +33945,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for {{ var_accounts_passwords_pam_faillock_dir }} in /etc/audit/rules.d/
+- name: Record Attempts to Alter Logon and Logout Events - faillock - Add watch rule for {{ var_accounts_passwords_pam_faillock_dir
+    }} in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w {{ var_accounts_passwords_pam_faillock_dir }} -p wa -k logins
@@ -32872,7 +33961,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -32893,10 +33982,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for {{ var_accounts_passwords_pam_faillock_dir }} already exists in /etc/audit/audit.rules
+- name: Record Attempts to Alter Logon and Logout Events - faillock - Check if watch rule for {{ var_accounts_passwords_pam_faillock_dir
+    }} already exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+{{ var_accounts_passwords_pam_faillock_dir }}\s+-p\s+wa(\s|$)+
@@ -32908,7 +33998,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -32928,10 +34018,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for {{ var_accounts_passwords_pam_faillock_dir }} in /etc/audit/audit.rules
+- name: Record Attempts to Alter Logon and Logout Events - faillock - Add watch rule for {{ var_accounts_passwords_pam_faillock_dir
+    }} in /etc/audit/audit.rules
   lineinfile:
     line: -w {{ var_accounts_passwords_pam_faillock_dir }} -p wa -k logins
     state: present
@@ -32944,7 +34035,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -32965,7 +34056,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -32987,7 +34078,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - DISA_STIG_RHEL_09_654255 | bool
@@ -32995,10 +34086,11 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /var/log/lastlog already exists in /etc/audit/rules.d/
+- name: Record Attempts to Alter Logon and Logout Events - lastlog - Check if watch rule for /var/log/lastlog already exists
+    in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/var/log/lastlog\s+-p\s+wa(\s|$)+
@@ -33010,7 +34102,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33030,10 +34122,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key logins
+- name: Record Attempts to Alter Logon and Logout Events - lastlog - Search /etc/audit/rules.d for other rules with specified
+    key logins
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)logins$
@@ -33045,7 +34138,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33066,10 +34159,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/logins.rules as the recipient for the rule
+- name: Record Attempts to Alter Logon and Logout Events - lastlog - Use /etc/audit/rules.d/logins.rules as the recipient
+    for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/logins.rules
@@ -33079,7 +34173,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33101,10 +34195,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Attempts to Alter Logon and Logout Events - lastlog - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -33114,7 +34208,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33136,10 +34230,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/lastlog in /etc/audit/rules.d/
+- name: Record Attempts to Alter Logon and Logout Events - lastlog - Add watch rule for /var/log/lastlog in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /var/log/lastlog -p wa -k logins
@@ -33151,7 +34245,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33172,10 +34266,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /var/log/lastlog already exists in /etc/audit/audit.rules
+- name: Record Attempts to Alter Logon and Logout Events - lastlog - Check if watch rule for /var/log/lastlog already exists
+    in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/var/log/lastlog\s+-p\s+wa(\s|$)+
@@ -33187,7 +34282,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33207,10 +34302,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/lastlog in /etc/audit/audit.rules
+- name: Record Attempts to Alter Logon and Logout Events - lastlog - Add watch rule for /var/log/lastlog in /etc/audit/audit.rules
   lineinfile:
     line: -w /var/log/lastlog -p wa -k logins
     state: present
@@ -33223,7 +34318,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33244,7 +34339,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -33266,7 +34361,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
   when:
   - DISA_STIG_RHEL_09_654260 | bool
@@ -33274,10 +34369,11 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /var/log/tallylog already exists in /etc/audit/rules.d/
+- name: Record Attempts to Alter Logon and Logout Events - tallylog - Check if watch rule for /var/log/tallylog already exists
+    in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/var/log/tallylog\s+-p\s+wa(\s|$)+
@@ -33289,7 +34385,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33309,10 +34405,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key logins
+- name: Record Attempts to Alter Logon and Logout Events - tallylog - Search /etc/audit/rules.d for other rules with specified
+    key logins
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)logins$
@@ -33324,7 +34421,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33345,10 +34442,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/logins.rules as the recipient for the rule
+- name: Record Attempts to Alter Logon and Logout Events - tallylog - Use /etc/audit/rules.d/logins.rules as the recipient
+    for the rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/logins.rules
@@ -33358,7 +34456,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33380,10 +34478,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Attempts to Alter Logon and Logout Events - tallylog - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -33393,7 +34491,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33415,10 +34513,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/tallylog in /etc/audit/rules.d/
+- name: Record Attempts to Alter Logon and Logout Events - tallylog - Add watch rule for /var/log/tallylog in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /var/log/tallylog -p wa -k logins
@@ -33430,7 +34528,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33451,10 +34549,11 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /var/log/tallylog already exists in /etc/audit/audit.rules
+- name: Record Attempts to Alter Logon and Logout Events - tallylog - Check if watch rule for /var/log/tallylog already exists
+    in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/var/log/tallylog\s+-p\s+wa(\s|$)+
@@ -33466,7 +34565,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33486,10 +34585,10 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /var/log/tallylog in /etc/audit/audit.rules
+- name: Record Attempts to Alter Logon and Logout Events - tallylog - Add watch rule for /var/log/tallylog in /etc/audit/audit.rules
   lineinfile:
     line: -w /var/log/tallylog -p wa -k logins
     state: present
@@ -33502,7 +34601,7 @@
   - low_complexity | bool
   - low_disruption | bool
   - medium_severity | bool
-  - reboot_required | bool
+  - no_reboot_needed | bool
   - restrict_strategy | bool
   - '"audit" in ansible_facts.packages'
   - '"kernel" in ansible_facts.packages'
@@ -33523,7 +34622,7 @@
   - low_complexity
   - low_disruption
   - medium_severity
-  - reboot_required
+  - no_reboot_needed
   - restrict_strategy
 
 - name: Gather the package facts
@@ -34621,7 +35720,7 @@
   - no_reboot_needed | bool
   - restrict_strategy | bool
 
-- name: Check if watch rule for /etc/localtime already exists in /etc/audit/rules.d/
+- name: Record Attempts to Alter the localtime File - Check if watch rule for /etc/localtime already exists in /etc/audit/rules.d/
   find:
     paths: /etc/audit/rules.d
     contains: ^\s*-w\s+/etc/localtime\s+-p\s+wa(\s|$)+
@@ -34654,7 +35753,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Search /etc/audit/rules.d for other rules with specified key audit_time_rules
+- name: Record Attempts to Alter the localtime File - Search /etc/audit/rules.d for other rules with specified key audit_time_rules
   find:
     paths: /etc/audit/rules.d
     contains: ^.*(?:-F key=|-k\s+)audit_time_rules$
@@ -34688,7 +35787,8 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use /etc/audit/rules.d/audit_time_rules.rules as the recipient for the rule
+- name: Record Attempts to Alter the localtime File - Use /etc/audit/rules.d/audit_time_rules.rules as the recipient for the
+    rule
   set_fact:
     all_files:
     - /etc/audit/rules.d/audit_time_rules.rules
@@ -34721,7 +35821,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Use matched file as the recipient for the rule
+- name: Record Attempts to Alter the localtime File - Use matched file as the recipient for the rule
   set_fact:
     all_files:
     - '{{ find_watch_key.files | map(attribute=''path'') | list | first }}'
@@ -34754,7 +35854,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/localtime in /etc/audit/rules.d/
+- name: Record Attempts to Alter the localtime File - Add watch rule for /etc/localtime in /etc/audit/rules.d/
   lineinfile:
     path: '{{ all_files[0] }}'
     line: -w /etc/localtime -p wa -k audit_time_rules
@@ -34788,7 +35888,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Check if watch rule for /etc/localtime already exists in /etc/audit/audit.rules
+- name: Record Attempts to Alter the localtime File - Check if watch rule for /etc/localtime already exists in /etc/audit/audit.rules
   find:
     paths: /etc/audit/
     contains: ^\s*-w\s+/etc/localtime\s+-p\s+wa(\s|$)+
@@ -34821,7 +35921,7 @@
   - no_reboot_needed
   - restrict_strategy
 
-- name: Add watch rule for /etc/localtime in /etc/audit/audit.rules
+- name: Record Attempts to Alter the localtime File - Add watch rule for /etc/localtime in /etc/audit/audit.rules
   lineinfile:
     line: -w /etc/localtime -p wa -k audit_time_rules
     state: present
