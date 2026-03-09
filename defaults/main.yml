@@ -127,7 +127,6 @@ DISA_STIG_RHEL_09_411075: true
 DISA_STIG_RHEL_09_411090: true
 DISA_STIG_RHEL_09_411100: true
 DISA_STIG_RHEL_09_412035: true
-DISA_STIG_RHEL_09_412075: true
 DISA_STIG_RHEL_09_431010: true
 DISA_STIG_RHEL_09_431015: true
 DISA_STIG_RHEL_09_432010: true
@@ -160,7 +159,6 @@ DISA_STIG_RHEL_09_654240: true
 DISA_STIG_RHEL_09_654245: true
 DISA_STIG_RHEL_09_654250: true
 DISA_STIG_RHEL_09_654255: true
-DISA_STIG_RHEL_09_654260: true
 DISA_STIG_RHEL_09_654275: true
 DISA_STIG_RHEL_09_672030: true
 DISA_STIG_needed_rules: true
@@ -231,7 +229,6 @@ auditd_name_format: true
 chronyd_run_as_chrony_user: true
 chronyd_specify_remote_server: true
 configure_crypto_policy: true
-configure_ssh_crypto_policy: true
 configure_strategy: true
 coredump_disable_backtraces: true
 coredump_disable_storage: true
