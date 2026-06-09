@@ -58,6 +58,7 @@ DISA_STIG_RHEL_09_214015: true
 DISA_STIG_RHEL_09_214025: true
 DISA_STIG_RHEL_09_215040: true
 DISA_STIG_RHEL_09_215060: true
+DISA_STIG_RHEL_09_215101: true
 DISA_STIG_RHEL_09_215105: true
 DISA_STIG_RHEL_09_232040: true
 DISA_STIG_RHEL_09_232055: true
@@ -346,6 +347,7 @@ package_libselinux_installed: true
 package_logrotate_installed: true
 package_net_snmp_removed: true
 package_nftables_installed: true
+package_postfix_installed: true
 package_sudo_installed: true
 package_telnet_removed: true
 package_telnet_server_removed: true
@@ -406,5 +408,4 @@ sysctl_net_ipv6_conf_default_accept_source_route: true
 timer_logrotate_enabled: true
 unknown_severity: true
 unknown_strategy: true
-use_pam_wheel_group_for_su: true
 wireless_disable_interfaces: true
